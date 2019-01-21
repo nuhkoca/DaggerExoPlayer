@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <variable
+            name="networkItemListener"
+            type="com.nuhkoca.myapplication.ui.main.adapter.VideoAdapter.NetworkItemListener" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clNetwork"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp">
+
+        <ProgressBar
+            android:id="@+id/pbNetwork"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:indeterminateTint="@color/colorAccent"
+            style="?android:attr/progressBarStyle"/>
+
+        <TextView
+            android:id="@+id/tvNetworkStateErrText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pbNetwork" />
+
+        <Button
+            android:id="@+id/btnNetworkStateErrButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvNetworkStateErrText"
+            android:text="@string/retry_text"
+            android:textColor="@color/colorAccent"
+            style="@style/Widget.Exo.BorderlessButton"
+            android:onClick="@{() -> networkItemListener.onNetworkItemClicked()}"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
