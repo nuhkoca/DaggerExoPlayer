@@ -70,7 +70,7 @@ public class MainViewModel extends ViewModel {
      *
      * @return video result
      */
-    public LiveData<PagedList<VideoResponse>> getVideoResult() {
+    LiveData<PagedList<VideoResponse>> getVideoResult() {
         return mVideoResult;
     }
 
@@ -79,7 +79,7 @@ public class MainViewModel extends ViewModel {
      *
      * @return network state
      */
-    public LiveData<NetworkState> getNetworkState() {
+    LiveData<NetworkState> getNetworkState() {
         return mNetworkState;
     }
 
@@ -88,7 +88,16 @@ public class MainViewModel extends ViewModel {
      *
      * @return initial network state
      */
-    public LiveData<NetworkState> getInitialLoading() {
+    LiveData<NetworkState> getInitialLoading() {
         return mInitialLoading;
+    }
+
+    /**
+     * Clears references
+     */
+    @Override
+    protected void onCleared() {
+        videoResultDataSourceFactory.getPageKeyedVideosDataSource().clear();
+        super.onCleared();
     }
 }

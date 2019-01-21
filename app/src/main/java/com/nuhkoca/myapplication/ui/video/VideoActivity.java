@@ -90,10 +90,8 @@ public class VideoActivity extends DaggerAppCompatActivity implements PlaybackPr
      */
     private void initializePlayer() {
         exoPlayer.setVideoScalingMode(C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING);
-
         mActivityVideoBinding.pvVideo.setPlayer(exoPlayer);
         mActivityVideoBinding.pvVideo.setPlaybackPreparer(this);
-
         exoPlayer.addListener(this);
         exoPlayer.setPlayWhenReady(mShouldAutoPlay);
 
