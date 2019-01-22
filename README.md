@@ -2,6 +2,8 @@
 
 This project demonstrates ExoPlayer injection with Dagger2. The app uses [Vimeo API](https://developer.vimeo.com/) as a service.
 
+As a part of this Medium article: [Click here to visit the related Medium article](https://medium.com/@nuhkocaa/exoplayer-inject-with-dagger2-6e6f9aa8deb2)
+
 Please visit [Vimeo Developer Page](https://developer.vimeo.com/) to obtain your access token.
 
 ### Configuration
