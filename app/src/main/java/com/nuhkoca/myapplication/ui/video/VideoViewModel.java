@@ -74,4 +74,13 @@ public class VideoViewModel extends ViewModel {
     MutableLiveData<PlayerResponse> getContent() {
         return mPlayerResponse;
     }
+
+    /**
+     * Clears references
+     */
+    @Override
+    protected void onCleared() {
+        compositeDisposable.clear();
+        super.onCleared();
+    }
 }
