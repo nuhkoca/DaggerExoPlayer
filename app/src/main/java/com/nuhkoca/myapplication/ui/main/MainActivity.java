@@ -11,6 +11,7 @@ import com.nuhkoca.myapplication.helper.Constants;
 import com.nuhkoca.myapplication.helper.RecyclerViewItemDecoration;
 import com.nuhkoca.myapplication.ui.main.adapter.VideoAdapter;
 import com.nuhkoca.myapplication.ui.video.VideoActivity;
+import com.nuhkoca.myapplication.util.PreferenceUtil;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -33,6 +34,8 @@ public class MainActivity extends DaggerAppCompatActivity {
 
     @Inject
     ViewModelProvider.Factory viewModelFactory;
+    @Inject
+    PreferenceUtil preferenceUtil;
 
     /**
      * Initializes the activity
@@ -75,6 +78,7 @@ public class MainActivity extends DaggerAppCompatActivity {
      * @param videoId indicates the video id of the selected item
      */
     private void onVideoItemClicked(@Nullable String videoId) {
+        preferenceUtil.putLongData(Constants.CURRENT_POSITION_KEY, 0);
         Intent videoIntent = new Intent(this, VideoActivity.class);
         Bundle extras = new Bundle();
         extras.putString(Constants.VIDEO_KEY, videoId);

@@ -15,6 +15,7 @@ import com.google.android.exoplayer2.util.Util;
 import com.nuhkoca.myapplication.R;
 import com.nuhkoca.myapplication.databinding.ActivityVideoBinding;
 import com.nuhkoca.myapplication.helper.Constants;
+import com.nuhkoca.myapplication.util.PreferenceUtil;
 
 import java.net.CookieHandler;
 import java.net.CookieManager;
@@ -46,6 +47,8 @@ public class VideoActivity extends DaggerAppCompatActivity implements PlaybackPr
     ExtractorMediaSource.Factory factory;
     @Inject
     CookieManager DEFAULT_COOKIE_MANAGER;
+    @Inject
+    PreferenceUtil preferenceUtil;
     @Inject
     ViewModelProvider.Factory viewModelFactory;
 
@@ -101,6 +104,7 @@ public class VideoActivity extends DaggerAppCompatActivity implements PlaybackPr
                 return;
             mVideoUrl = playerResponse.getRequest().getFiles().getProgressive().get(2).getUrl();
             exoPlayer.prepare(buildMediaSource(Uri.parse(mVideoUrl)));
+            exoPlayer.seekTo(preferenceUtil.getLongData(Constants.CURRENT_POSITION_KEY, 0));
         });
     }
 
@@ -110,9 +114,10 @@ public class VideoActivity extends DaggerAppCompatActivity implements PlaybackPr
     private void releasePlayer() {
         if (exoPlayer != null) {
             exoPlayer.stop();
-            exoPlayer.release();
+            //exoPlayer.release();
             exoPlayer.removeListener(this);
             mShouldAutoPlay = exoPlayer.getPlayWhenReady();
+            preferenceUtil.putLongData(Constants.CURRENT_POSITION_KEY, exoPlayer.getCurrentPosition());
         }
     }
 

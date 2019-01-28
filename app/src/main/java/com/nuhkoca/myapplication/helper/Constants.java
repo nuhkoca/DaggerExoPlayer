@@ -22,6 +22,8 @@ public final class Constants {
     public static final String LIKES_KEY = "sort";
     public static final String LIKES_VALUE = "likes";
     public static final String VIDEO_KEY = "video";
+    public static final String CURRENT_POSITION_KEY = "exo_current_position";
+    public static final String EXO_PREF_NAME = "exo_shared_pref";
     public static final Locale locale = new Locale("tr", "TR", "tr");
 
     public Constants() {
