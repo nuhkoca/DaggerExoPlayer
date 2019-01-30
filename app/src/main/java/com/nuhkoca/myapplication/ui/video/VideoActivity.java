@@ -4,7 +4,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 
-import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.PlaybackPreparer;
 import com.google.android.exoplayer2.Player;
@@ -17,10 +16,8 @@ import com.nuhkoca.myapplication.databinding.ActivityVideoBinding;
 import com.nuhkoca.myapplication.helper.Constants;
 import com.nuhkoca.myapplication.util.PreferenceUtil;
 
-import java.net.CookieHandler;
-import java.net.CookieManager;
-
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -42,11 +39,9 @@ public class VideoActivity extends DaggerAppCompatActivity implements PlaybackPr
     private String mVideoUrl;
 
     @Inject
-    SimpleExoPlayer exoPlayer;
+    Provider<SimpleExoPlayer> exoPlayer;
     @Inject
-    ExtractorMediaSource.Factory factory;
-    @Inject
-    CookieManager DEFAULT_COOKIE_MANAGER;
+    Provider<ExtractorMediaSource.Factory> factory;
     @Inject
     PreferenceUtil preferenceUtil;
     @Inject
@@ -68,10 +63,6 @@ public class VideoActivity extends DaggerAppCompatActivity implements PlaybackPr
             mShouldAutoPlay = true;
         }
 
-        if (CookieHandler.getDefault() != DEFAULT_COOKIE_MANAGER) {
-            CookieHandler.setDefault(DEFAULT_COOKIE_MANAGER);
-        }
-
         Bundle extras = getIntent().getExtras();
         if (extras == null) return;
         mVideoUrl = extras.getString(Constants.VIDEO_KEY);
@@ -85,26 +76,25 @@ public class VideoActivity extends DaggerAppCompatActivity implements PlaybackPr
      */
     @NonNull
     private MediaSource buildMediaSource(@Nullable Uri uri) {
-        return factory.createMediaSource(uri);
+        return factory.get().createMediaSource(uri);
     }
 
     /**
      * Initializes the {@link VideoActivity#exoPlayer}
      */
     private void initializePlayer() {
-        exoPlayer.setVideoScalingMode(C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING);
-        mActivityVideoBinding.pvVideo.setPlayer(exoPlayer);
+        mActivityVideoBinding.pvVideo.setPlayer(exoPlayer.get());
         mActivityVideoBinding.pvVideo.setPlaybackPreparer(this);
-        exoPlayer.addListener(this);
-        exoPlayer.setPlayWhenReady(mShouldAutoPlay);
+        exoPlayer.get().addListener(this);
+        exoPlayer.get().setPlayWhenReady(mShouldAutoPlay);
 
         mVideoViewModel.getPlayableContent(mVideoUrl);
         mVideoViewModel.getContent().observe(this, playerResponse -> {
             if (playerResponse == null || playerResponse.getRequest().getFiles().getProgressive() == null)
                 return;
             mVideoUrl = playerResponse.getRequest().getFiles().getProgressive().get(2).getUrl();
-            exoPlayer.prepare(buildMediaSource(Uri.parse(mVideoUrl)));
-            exoPlayer.seekTo(preferenceUtil.getLongData(Constants.CURRENT_POSITION_KEY, 0));
+            exoPlayer.get().prepare(buildMediaSource(Uri.parse(mVideoUrl)));
+            exoPlayer.get().seekTo(preferenceUtil.getLongData(Constants.CURRENT_POSITION_KEY, 0));
         });
     }
 
@@ -113,11 +103,11 @@ public class VideoActivity extends DaggerAppCompatActivity implements PlaybackPr
      */
     private void releasePlayer() {
         if (exoPlayer != null) {
-            exoPlayer.stop();
-            //exoPlayer.release();
-            exoPlayer.removeListener(this);
-            mShouldAutoPlay = exoPlayer.getPlayWhenReady();
-            preferenceUtil.putLongData(Constants.CURRENT_POSITION_KEY, exoPlayer.getCurrentPosition());
+            exoPlayer.get().stop();
+            exoPlayer.get().release();
+            exoPlayer.get().removeListener(this);
+            mShouldAutoPlay = exoPlayer.get().getPlayWhenReady();
+            preferenceUtil.putLongData(Constants.CURRENT_POSITION_KEY, exoPlayer.get().getCurrentPosition());
         }
     }
 

@@ -2,11 +2,13 @@ package com.nuhkoca.myapplication.di.module;
 
 import android.content.Context;
 
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
@@ -27,6 +29,7 @@ import com.nuhkoca.myapplication.helper.Constants;
 import com.nuhkoca.myapplication.helper.DefaultCacheDataSourceFactory;
 
 import java.io.File;
+import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 
@@ -35,6 +38,7 @@ import javax.inject.Singleton;
 import androidx.annotation.NonNull;
 import dagger.Module;
 import dagger.Provides;
+import dagger.Reusable;
 
 /**
  * A {@link Module} that injects ExoPlayer
@@ -97,7 +101,7 @@ public class ExoModule {
      * @param factory represents an instance of {@link TrackSelection.Factory}
      * @return an instance of {@link DefaultTrackSelector}
      */
-    @Singleton
+    @Reusable
     @Provides
     public DefaultTrackSelector provideDefaultTrackSelector(@NonNull TrackSelection.Factory factory) {
         return new DefaultTrackSelector(factory);
@@ -109,6 +113,7 @@ public class ExoModule {
      * @param context represents an instance of {@link Context}
      * @return an instance of {@link DefaultRenderersFactory}
      */
+    @Reusable
     @Provides
     public DefaultRenderersFactory provideDefaultRenderersFactory(@NonNull Context context) {
         return new DefaultRenderersFactory(context);
@@ -119,9 +124,26 @@ public class ExoModule {
      *
      * @return an instance of {@link LoadControl}
      */
+    @Reusable
     @Provides
     public LoadControl provideLoadControl() {
         return new DefaultLoadControl();
+    }
+
+    /**
+     * Provides an instance of {@link AudioAttributes}
+     * This is used to interrupt audio in case of getting
+     * call or playing a music.
+     *
+     * @return an instance of {@link AudioAttributes}
+     */
+    @Singleton
+    @Provides
+    public AudioAttributes provideAudioAttributes() {
+        return new AudioAttributes.Builder()
+                .setUsage(C.USAGE_MEDIA)
+                .setContentType(C.CONTENT_TYPE_SPEECH)
+                .build();
     }
 
     /**
@@ -131,14 +153,20 @@ public class ExoModule {
      * @param renderersFactory represents an instance of {@link DefaultRenderersFactory}
      * @param trackSelector    represents an instance of {@link DefaultTrackSelector}
      * @param loadControl      represents an instance of {@link DefaultLoadControl}
+     * @param audioAttributes  represents an instance of {@link AudioAttributes}
      * @return an instance of {@link SimpleExoPlayer}
      */
+    @Reusable
     @Provides
     public SimpleExoPlayer provideExoPlayer(@NonNull Context context,
                                             @NonNull DefaultRenderersFactory renderersFactory,
                                             @NonNull DefaultTrackSelector trackSelector,
-                                            @NonNull LoadControl loadControl) {
-        return ExoPlayerFactory.newSimpleInstance(context, renderersFactory, trackSelector, loadControl);
+                                            @NonNull LoadControl loadControl,
+                                            @NonNull AudioAttributes audioAttributes) {
+        SimpleExoPlayer exoPlayer = ExoPlayerFactory.newSimpleInstance(context, renderersFactory, trackSelector, loadControl);
+        exoPlayer.setAudioAttributes(audioAttributes, true);
+        exoPlayer.setVideoScalingMode(C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING);
+        return exoPlayer;
     }
 
     /**
@@ -149,7 +177,7 @@ public class ExoModule {
      * @param factory        represents an instance of {@link HttpDataSource.Factory}
      * @return an instance of {@link DefaultDataSourceFactory}
      */
-    @Singleton
+    @Reusable
     @Provides
     public DefaultDataSourceFactory provideDefaultDataSourceFactory(@NonNull Context context,
                                                                     @NonNull DefaultBandwidthMeter bandwidthMeter,
@@ -162,7 +190,7 @@ public class ExoModule {
      *
      * @return an instance of {@link LeastRecentlyUsedCacheEvictor}
      */
-    @Singleton
+    @Reusable
     @Provides
     public LeastRecentlyUsedCacheEvictor provideLeastRecentlyUsedCacheEvictor() {
         return new LeastRecentlyUsedCacheEvictor(Constants.EXO_PLAYER_VIDEO_CACHE_DURATION);
@@ -174,7 +202,7 @@ public class ExoModule {
      * @param cacheDataSource represents an instance of {@link CacheDataSource}
      * @return an instance of {@link DataSource.Factory}
      */
-    @Singleton
+    @Reusable
     @Provides
     public DataSource.Factory provideDataSourceFactory(@NonNull CacheDataSource cacheDataSource) {
         return new DefaultCacheDataSourceFactory(cacheDataSource);
@@ -186,7 +214,7 @@ public class ExoModule {
      * @param factory represents an instance of {@link DataSource.Factory}
      * @return an instance of {@link ExtractorMediaSource.Factory}
      */
-    @Singleton
+    @Reusable
     @Provides
     public ExtractorMediaSource.Factory provideExtractorMediaSourceFactory(@NonNull DataSource.Factory factory) {
         return new ExtractorMediaSource.Factory(factory);
@@ -213,7 +241,7 @@ public class ExoModule {
      * @param cacheDataSink represents an instance of {@link CacheDataSink}
      * @return an instance of {@link CacheDataSource}
      */
-    @Singleton
+    @Reusable
     @Provides
     public CacheDataSource provideCacheDataSource(@NonNull SimpleCache simpleCache,
                                                   @NonNull DefaultDataSourceFactory factory,
@@ -228,7 +256,7 @@ public class ExoModule {
      * @param simpleCache represents an instance of {@link SimpleCache}
      * @return an instance of {@link CacheDataSink}
      */
-    @Singleton
+    @Reusable
     @Provides
     public CacheDataSink provideCacheDataSink(@NonNull SimpleCache simpleCache) {
         return new CacheDataSink(simpleCache, Constants.EXO_PLAYER_VIDEO_CACHE_DURATION);
@@ -245,5 +273,21 @@ public class ExoModule {
         CookieManager cookieManager = new CookieManager();
         cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ORIGINAL_SERVER);
         return cookieManager;
+    }
+
+    /**
+     * Returns an instance of {@link CookieHandler}
+     *
+     * @param cookieManager represents an instance of {@link CookieManager}
+     * @return an instance of {@link CookieHandler}
+     */
+    @Singleton
+    @Provides
+    public CookieHandler provideCookieHandler(@NonNull CookieManager cookieManager) {
+        if (CookieHandler.getDefault() != cookieManager) {
+            CookieHandler.setDefault(cookieManager);
+        }
+
+        return CookieHandler.getDefault();
     }
 }
