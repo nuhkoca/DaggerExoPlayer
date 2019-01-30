@@ -37,15 +37,12 @@ public class VideoActivity extends DaggerAppCompatActivity implements PlaybackPr
     private ActivityVideoBinding mActivityVideoBinding;
     private VideoViewModel mVideoViewModel;
     private String mVideoUrl;
+    private SimpleExoPlayer exoPlayerInternal;
 
-    @Inject
-    Provider<SimpleExoPlayer> exoPlayer;
-    @Inject
-    Provider<ExtractorMediaSource.Factory> factory;
-    @Inject
-    PreferenceUtil preferenceUtil;
-    @Inject
-    ViewModelProvider.Factory viewModelFactory;
+    @Inject Provider<SimpleExoPlayer> exoPlayer;
+    @Inject Provider<ExtractorMediaSource.Factory> factory;
+    @Inject PreferenceUtil preferenceUtil;
+    @Inject ViewModelProvider.Factory viewModelFactory;
 
     /**
      * Initializes the activity
@@ -76,25 +73,27 @@ public class VideoActivity extends DaggerAppCompatActivity implements PlaybackPr
      */
     @NonNull
     private MediaSource buildMediaSource(@Nullable Uri uri) {
-        return factory.get().createMediaSource(uri);
+        ExtractorMediaSource.Factory factoryInternal = factory.get();
+        return factoryInternal.createMediaSource(uri);
     }
 
     /**
      * Initializes the {@link VideoActivity#exoPlayer}
      */
     private void initializePlayer() {
-        mActivityVideoBinding.pvVideo.setPlayer(exoPlayer.get());
+        exoPlayerInternal = exoPlayer.get();
+
+        mActivityVideoBinding.pvVideo.setPlayer(exoPlayerInternal);
         mActivityVideoBinding.pvVideo.setPlaybackPreparer(this);
-        exoPlayer.get().addListener(this);
-        exoPlayer.get().setPlayWhenReady(mShouldAutoPlay);
+        exoPlayerInternal.addListener(this);
+        exoPlayerInternal.setPlayWhenReady(mShouldAutoPlay);
 
         mVideoViewModel.getPlayableContent(mVideoUrl);
         mVideoViewModel.getContent().observe(this, playerResponse -> {
-            if (playerResponse == null || playerResponse.getRequest().getFiles().getProgressive() == null)
-                return;
+            if (playerResponse == null || playerResponse.getRequest().getFiles().getProgressive() == null) return;
             mVideoUrl = playerResponse.getRequest().getFiles().getProgressive().get(2).getUrl();
-            exoPlayer.get().prepare(buildMediaSource(Uri.parse(mVideoUrl)));
-            exoPlayer.get().seekTo(preferenceUtil.getLongData(Constants.CURRENT_POSITION_KEY, 0));
+            exoPlayerInternal.prepare(buildMediaSource(Uri.parse(mVideoUrl)));
+            exoPlayerInternal.seekTo(preferenceUtil.getLongData(Constants.CURRENT_POSITION_KEY, 0));
         });
     }
 
@@ -102,12 +101,13 @@ public class VideoActivity extends DaggerAppCompatActivity implements PlaybackPr
      * Releases the {@link VideoActivity#exoPlayer}
      */
     private void releasePlayer() {
-        if (exoPlayer != null) {
-            exoPlayer.get().stop();
-            exoPlayer.get().release();
-            exoPlayer.get().removeListener(this);
-            mShouldAutoPlay = exoPlayer.get().getPlayWhenReady();
-            preferenceUtil.putLongData(Constants.CURRENT_POSITION_KEY, exoPlayer.get().getCurrentPosition());
+        if (exoPlayerInternal != null) {
+            exoPlayerInternal.stop();
+            exoPlayerInternal.release();
+            exoPlayerInternal.removeListener(this);
+            mShouldAutoPlay = exoPlayerInternal.getPlayWhenReady();
+            preferenceUtil.putLongData(Constants.CURRENT_POSITION_KEY, exoPlayerInternal.getCurrentPosition());
+            exoPlayerInternal = null;
         }
     }
 

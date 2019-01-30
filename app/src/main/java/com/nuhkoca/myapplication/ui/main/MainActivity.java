@@ -62,6 +62,13 @@ public class MainActivity extends DaggerAppCompatActivity {
             if (networkState == null) return;
             if (networkState.getStatus() == NetworkState.Status.SUCCESS) {
                 mActivityMainBinding.pbLoading.setVisibility(View.GONE);
+                mActivityMainBinding.rvList.setVisibility(View.VISIBLE);
+                mActivityMainBinding.tvError.setVisibility(View.GONE);
+            } else if (networkState.getStatus() == NetworkState.Status.FAILED) {
+                mActivityMainBinding.rvList.setVisibility(View.GONE);
+                mActivityMainBinding.tvError.setVisibility(View.VISIBLE);
+                mActivityMainBinding.tvError.setText(networkState.getMessage());
+                mActivityMainBinding.pbLoading.setVisibility(View.GONE);
             }
         });
         mMainViewModel.getNetworkState().observe(this, networkState -> {

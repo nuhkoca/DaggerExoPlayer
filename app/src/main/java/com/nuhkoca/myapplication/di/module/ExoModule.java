@@ -156,7 +156,6 @@ public class ExoModule {
      * @param audioAttributes  represents an instance of {@link AudioAttributes}
      * @return an instance of {@link SimpleExoPlayer}
      */
-    @Reusable
     @Provides
     public SimpleExoPlayer provideExoPlayer(@NonNull Context context,
                                             @NonNull DefaultRenderersFactory renderersFactory,

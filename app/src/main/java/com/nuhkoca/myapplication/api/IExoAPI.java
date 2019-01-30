@@ -5,6 +5,7 @@ import com.nuhkoca.myapplication.data.remote.video.VideoWrapper;
 
 import androidx.annotation.NonNull;
 import io.reactivex.Single;
+import retrofit2.Response;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -23,7 +24,7 @@ public interface IExoAPI {
      * @return a list of videos
      */
     @GET("videos")
-    Single<VideoWrapper> getVideoList(@Query("page") int page);
+    Single<Response<VideoWrapper>> getVideoList(@Query("page") int page);
 
     /**
      * Returns a playable content for the video id

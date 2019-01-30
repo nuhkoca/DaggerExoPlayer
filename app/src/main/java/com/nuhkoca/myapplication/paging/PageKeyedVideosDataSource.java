@@ -85,7 +85,7 @@ public class PageKeyedVideosDataSource extends PageKeyedDataSource<Integer, Vide
         mInitialLoading.postValue(NetworkState.LOADING);
 
         Disposable artist = videoRepository.getVideoList(1)
-                .subscribe(videoWrapper -> onInitialSuccess(videoWrapper, callback, videoResponses), this::onInitialError);
+                .subscribe(videoWrapper -> onInitialSuccess(videoWrapper.body(), callback, videoResponses), this::onInitialError);
 
         compositeDisposable.add(artist);
     }
@@ -109,7 +109,7 @@ public class PageKeyedVideosDataSource extends PageKeyedDataSource<Integer, Vide
         mNetworkState.postValue(NetworkState.LOADING);
 
         Disposable artist = videoRepository.getVideoList(params.key)
-                .subscribe(videoWrapper -> onPaginationSuccess(videoWrapper, callback, params, videoResponses), this::onPaginationError);
+                .subscribe(videoWrapper -> onPaginationSuccess(videoWrapper.body(), callback, params, videoResponses), this::onPaginationError);
 
         compositeDisposable.add(artist);
     }
@@ -121,8 +121,8 @@ public class PageKeyedVideosDataSource extends PageKeyedDataSource<Integer, Vide
      */
     @Override
     public void onInitialError(Throwable throwable) {
-        mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED, context.getString(R.string.network_call_initial_error)));
-        mInitialLoading.postValue(new NetworkState(NetworkState.Status.FAILED, context.getString(R.string.network_call_initial_error)));
+        mNetworkState.postValue(new NetworkState(NetworkState.Status.FAILED, throwable.getMessage()));
+        mInitialLoading.postValue(new NetworkState(NetworkState.Status.FAILED, throwable.getMessage()));
     }
 
     /**
