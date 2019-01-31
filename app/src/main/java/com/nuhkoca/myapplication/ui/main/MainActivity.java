@@ -32,10 +32,8 @@ public class MainActivity extends DaggerAppCompatActivity {
     private ActivityMainBinding mActivityMainBinding;
     private MainViewModel mMainViewModel;
 
-    @Inject
-    ViewModelProvider.Factory viewModelFactory;
-    @Inject
-    PreferenceUtil preferenceUtil;
+    @Inject ViewModelProvider.Factory viewModelFactory;
+    @Inject PreferenceUtil preferenceUtil;
 
     /**
      * Initializes the activity

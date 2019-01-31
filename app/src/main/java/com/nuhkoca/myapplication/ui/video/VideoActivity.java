@@ -1,29 +1,21 @@
 package com.nuhkoca.myapplication.ui.video;
 
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 
-import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.PlaybackPreparer;
 import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.util.Util;
 import com.nuhkoca.myapplication.R;
 import com.nuhkoca.myapplication.databinding.ActivityVideoBinding;
 import com.nuhkoca.myapplication.helper.Constants;
-import com.nuhkoca.myapplication.util.PreferenceUtil;
+import com.nuhkoca.myapplication.util.exo.ExoUtil;
+import com.nuhkoca.myapplication.util.exo.ExoUtilFactory;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
+import dagger.Lazy;
 import dagger.android.support.DaggerAppCompatActivity;
 
 /**
@@ -31,18 +23,13 @@ import dagger.android.support.DaggerAppCompatActivity;
  *
  * @author nuhkoca
  */
-public class VideoActivity extends DaggerAppCompatActivity implements PlaybackPreparer, Player.EventListener {
+public class VideoActivity extends DaggerAppCompatActivity implements ExoUtil.PlayerStateListener {
 
-    private static boolean mShouldAutoPlay;
     private ActivityVideoBinding mActivityVideoBinding;
-    private VideoViewModel mVideoViewModel;
-    private String mVideoUrl;
-    private SimpleExoPlayer exoPlayerInternal;
+    private ExoUtil exoUtil;
 
-    @Inject Provider<SimpleExoPlayer> exoPlayer;
-    @Inject Provider<ExtractorMediaSource.Factory> factory;
-    @Inject PreferenceUtil preferenceUtil;
     @Inject ViewModelProvider.Factory viewModelFactory;
+    @Inject Lazy<ExoUtilFactory> exoUtilFactory;
 
     /**
      * Initializes the activity
@@ -54,89 +41,42 @@ public class VideoActivity extends DaggerAppCompatActivity implements PlaybackPr
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mActivityVideoBinding = DataBindingUtil.setContentView(this, R.layout.activity_video);
-        mVideoViewModel = ViewModelProviders.of(this, viewModelFactory).get(VideoViewModel.class);
+        VideoViewModel videoViewModel = ViewModelProviders.of(this, viewModelFactory).get(VideoViewModel.class);
 
-        if (savedInstanceState == null) {
-            mShouldAutoPlay = true;
-        }
+        exoUtil = exoUtilFactory.get().getExoUtil();
+        exoUtil.setPlayerView(mActivityVideoBinding.pvVideo);
+        exoUtil.setListener(this);
 
         Bundle extras = getIntent().getExtras();
         if (extras == null) return;
-        mVideoUrl = extras.getString(Constants.VIDEO_KEY);
-    }
+        String videoUrl = extras.getString(Constants.VIDEO_KEY);
 
-    /**
-     * Helps build a {@link ExtractorMediaSource.Factory}
-     *
-     * @param uri represents a url to be played
-     * @return an instance of {@link MediaSource}
-     */
-    @NonNull
-    private MediaSource buildMediaSource(@Nullable Uri uri) {
-        ExtractorMediaSource.Factory factoryInternal = factory.get();
-        return factoryInternal.createMediaSource(uri);
-    }
-
-    /**
-     * Initializes the {@link VideoActivity#exoPlayer}
-     */
-    private void initializePlayer() {
-        exoPlayerInternal = exoPlayer.get();
-
-        mActivityVideoBinding.pvVideo.setPlayer(exoPlayerInternal);
-        mActivityVideoBinding.pvVideo.setPlaybackPreparer(this);
-        exoPlayerInternal.addListener(this);
-        exoPlayerInternal.setPlayWhenReady(mShouldAutoPlay);
-
-        mVideoViewModel.getPlayableContent(mVideoUrl);
-        mVideoViewModel.getContent().observe(this, playerResponse -> {
-            if (playerResponse == null || playerResponse.getRequest().getFiles().getProgressive() == null) return;
-            mVideoUrl = playerResponse.getRequest().getFiles().getProgressive().get(2).getUrl();
-            exoPlayerInternal.prepare(buildMediaSource(Uri.parse(mVideoUrl)));
-            exoPlayerInternal.seekTo(preferenceUtil.getLongData(Constants.CURRENT_POSITION_KEY, 0));
-        });
-    }
-
-    /**
-     * Releases the {@link VideoActivity#exoPlayer}
-     */
-    private void releasePlayer() {
-        if (exoPlayerInternal != null) {
-            exoPlayerInternal.stop();
-            exoPlayerInternal.release();
-            exoPlayerInternal.removeListener(this);
-            mShouldAutoPlay = exoPlayerInternal.getPlayWhenReady();
-            preferenceUtil.putLongData(Constants.CURRENT_POSITION_KEY, exoPlayerInternal.getCurrentPosition());
-            exoPlayerInternal = null;
+        if (videoUrl != null) {
+            videoViewModel.getPlayableContent(videoUrl);
+            videoViewModel.getContent().observe(this, playerResponse -> {
+                if (playerResponse == null || playerResponse.getRequest().getFiles().getProgressive() == null)
+                    return;
+                exoUtil.setUrl(playerResponse.getRequest().getFiles().getProgressive().get(2).getUrl());
+                exoUtil.onStart(); /* First, initialize when url is fetched, after that ExoUtil will handle the situation */
+            });
         }
-    }
-
-    /**
-     * Gets called when Exo prepares its playback
-     */
-    @Override
-    public void preparePlayback() {
-        initializePlayer();
     }
 
     /**
      * Gets called when there is an error to play video
-     *
-     * @param error represents an error
      */
     @Override
-    public void onPlayerError(ExoPlaybackException error) {
+    public void onPlayerError() {
         mActivityVideoBinding.pbError.setVisibility(View.GONE);
     }
 
     /**
      * Gets called when video is ready to be played.
      *
-     * @param playWhenReady indicates whether or not video is ready to be played
      * @param playbackState indicates the status of video
      */
     @Override
-    public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+    public void onPlayerStateChanged(int playbackState) {
         switch (playbackState) {
             case Player.STATE_BUFFERING:
                 mActivityVideoBinding.pbError.setVisibility(View.VISIBLE);
@@ -157,12 +97,7 @@ public class VideoActivity extends DaggerAppCompatActivity implements PlaybackPr
     @Override
     public void onStart() {
         super.onStart();
-        if (Util.SDK_INT > 23) {
-            initializePlayer();
-            if (mActivityVideoBinding.pvVideo != null) {
-                mActivityVideoBinding.pvVideo.onResume();
-            }
-        }
+        exoUtil.onStart();
     }
 
     /**
@@ -171,12 +106,7 @@ public class VideoActivity extends DaggerAppCompatActivity implements PlaybackPr
     @Override
     public void onResume() {
         super.onResume();
-        if (Util.SDK_INT <= 23 || mActivityVideoBinding.pvVideo == null) {
-            initializePlayer();
-            if (mActivityVideoBinding.pvVideo != null) {
-                mActivityVideoBinding.pvVideo.onResume();
-            }
-        }
+        exoUtil.onResume();
     }
 
     /**
@@ -185,12 +115,7 @@ public class VideoActivity extends DaggerAppCompatActivity implements PlaybackPr
     @Override
     public void onPause() {
         super.onPause();
-        if (Util.SDK_INT <= 23) {
-            if (mActivityVideoBinding.pvVideo != null) {
-                mActivityVideoBinding.pvVideo.onPause();
-            }
-            releasePlayer();
-        }
+        exoUtil.onPause();
     }
 
     /**
@@ -199,11 +124,6 @@ public class VideoActivity extends DaggerAppCompatActivity implements PlaybackPr
     @Override
     public void onStop() {
         super.onStop();
-        if (Util.SDK_INT > 23) {
-            if (mActivityVideoBinding.pvVideo != null) {
-                mActivityVideoBinding.pvVideo.onPause();
-            }
-            releasePlayer();
-        }
+        exoUtil.onStop();
     }
 }

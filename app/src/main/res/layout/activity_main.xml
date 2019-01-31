@@ -18,6 +18,7 @@
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:nestedScrollingEnabled="false"
         android:scrollbars="vertical"
+        android:splitMotionEvents="false"
         android:layoutAnimation="@anim/layout_animation_fall_down"/>
 
     <ProgressBar
