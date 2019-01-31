@@ -2,10 +2,9 @@ package com.nuhkoca.myapplication.ui.main;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 
+import com.nuhkoca.myapplication.BR;
 import com.nuhkoca.myapplication.R;
-import com.nuhkoca.myapplication.api.NetworkState;
 import com.nuhkoca.myapplication.databinding.ActivityMainBinding;
 import com.nuhkoca.myapplication.helper.Constants;
 import com.nuhkoca.myapplication.helper.RecyclerViewItemDecoration;
@@ -46,6 +45,8 @@ public class MainActivity extends DaggerAppCompatActivity {
         super.onCreate(savedInstanceState);
         mActivityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         mMainViewModel = ViewModelProviders.of(this, viewModelFactory).get(MainViewModel.class);
+        mActivityMainBinding.setVariable(BR.viewmodel, mMainViewModel);
+        mActivityMainBinding.setLifecycleOwner(this);
         initVideoList();
     }
 
@@ -56,19 +57,6 @@ public class MainActivity extends DaggerAppCompatActivity {
         VideoAdapter videoAdapter = new VideoAdapter(this::onVideoItemClicked, this::onNetworkItemClicked);
         mActivityMainBinding.rvList.addItemDecoration(
                 new RecyclerViewItemDecoration(mActivityMainBinding.pbLoading.getContext(), 1, 0));
-        mMainViewModel.getInitialLoading().observe(this, networkState -> {
-            if (networkState == null) return;
-            if (networkState.getStatus() == NetworkState.Status.SUCCESS) {
-                mActivityMainBinding.pbLoading.setVisibility(View.GONE);
-                mActivityMainBinding.rvList.setVisibility(View.VISIBLE);
-                mActivityMainBinding.tvError.setVisibility(View.GONE);
-            } else if (networkState.getStatus() == NetworkState.Status.FAILED) {
-                mActivityMainBinding.rvList.setVisibility(View.GONE);
-                mActivityMainBinding.tvError.setVisibility(View.VISIBLE);
-                mActivityMainBinding.tvError.setText(networkState.getMessage());
-                mActivityMainBinding.pbLoading.setVisibility(View.GONE);
-            }
-        });
         mMainViewModel.getNetworkState().observe(this, networkState -> {
             if (networkState == null) return;
             videoAdapter.setNetworkState(networkState);

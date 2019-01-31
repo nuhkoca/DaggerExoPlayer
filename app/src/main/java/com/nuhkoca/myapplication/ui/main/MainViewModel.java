@@ -88,7 +88,7 @@ public class MainViewModel extends ViewModel {
      *
      * @return initial network state
      */
-    LiveData<NetworkState> getInitialLoading() {
+    public LiveData<NetworkState> getInitialLoading() {
         return mInitialLoading;
     }
 
