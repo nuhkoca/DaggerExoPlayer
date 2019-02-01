@@ -1,5 +1,6 @@
 package com.nuhkoca.myapplication.di.module;
 
+import com.nuhkoca.myapplication.di.scope.PerActivity;
 import com.nuhkoca.myapplication.ui.main.MainActivity;
 import com.nuhkoca.myapplication.ui.video.VideoActivity;
 
@@ -19,6 +20,7 @@ public abstract class ActivityBuilder {
      *
      * @return an instance of {@link MainActivity}
      */
+    @PerActivity
     @ContributesAndroidInjector
     abstract MainActivity contributesMainActivityInjector();
 
@@ -27,6 +29,7 @@ public abstract class ActivityBuilder {
      *
      * @return an instance of {@link VideoActivity}
      */
+    @PerActivity
     @ContributesAndroidInjector
     abstract VideoActivity contributesVideoActivityInjector();
 }
