@@ -24,7 +24,7 @@ public abstract class ViewModelModule {
      * Returns an instance of {@link MainViewModel}
      *
      * @param mainViewModel represents an instance of {@link MainViewModel}
-     * @returnan instance of {@link MainViewModel}
+     * @return an instance of {@link MainViewModel}
      */
     @Binds
     @IntoMap
@@ -35,7 +35,7 @@ public abstract class ViewModelModule {
      * Returns an instance of {@link VideoViewModel}
      *
      * @param videoViewModel represents an instance of {@link VideoViewModel}
-     * @returnan instance of {@link VideoViewModel}
+     * @return an instance of {@link VideoViewModel}
      */
     @Binds
     @IntoMap
