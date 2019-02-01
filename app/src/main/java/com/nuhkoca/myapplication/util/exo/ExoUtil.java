@@ -46,10 +46,10 @@ public class ExoUtil implements PlaybackPreparer, Player.EventListener {
      */
     @Inject
     ExoUtil(@NonNull Provider<SimpleExoPlayer> exoPlayer,
-            @NonNull Provider<ExtractorMediaSource.Factory> factory,
+            @NonNull ExtractorMediaSource.Factory factory,
             @NonNull PreferenceUtil preferenceUtil) {
         this.exoPlayer = exoPlayer;
-        this.factory = factory.get();
+        this.factory = factory;
         this.preferenceUtil = preferenceUtil;
 
         mShouldAutoPlay = true;
