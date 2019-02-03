@@ -1,7 +1,6 @@
 package com.nuhkoca.myapplication.ui.video;
 
 import com.nuhkoca.myapplication.data.remote.player.PlayerResponse;
-import com.nuhkoca.myapplication.repository.PlayerRepository;
 
 import javax.inject.Inject;
 
@@ -10,6 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.observers.DisposableSingleObserver;
 
 /**
  * A {@link androidx.lifecycle.ViewModel} for media playing
@@ -18,22 +18,22 @@ import io.reactivex.disposables.Disposable;
  */
 public class VideoViewModel extends ViewModel {
 
-    private PlayerRepository playerRepository;
     private CompositeDisposable compositeDisposable;
+    private PlayerUseCase playerUseCase;
 
     private MutableLiveData<PlayerResponse> mPlayerResponse = new MutableLiveData<>();
 
     /**
      * A default constructor that inject required dependencies
      *
-     * @param playerRepository    represents an instance of {@link PlayerRepository}
      * @param compositeDisposable represents an instance of {@link CompositeDisposable}
+     * @param playerUseCase       represents an instance of {@link PlayerUseCase}
      */
     @Inject
-    VideoViewModel(@NonNull PlayerRepository playerRepository,
-                   @NonNull CompositeDisposable compositeDisposable) {
-        this.playerRepository = playerRepository;
+    VideoViewModel(@NonNull CompositeDisposable compositeDisposable,
+                   @NonNull PlayerUseCase playerUseCase) {
         this.compositeDisposable = compositeDisposable;
+        this.playerUseCase = playerUseCase;
     }
 
     /**
@@ -42,28 +42,19 @@ public class VideoViewModel extends ViewModel {
      * @param videoId indicates the video id
      */
     void getPlayableContent(@NonNull String videoId) {
-        Disposable player = playerRepository.getPlayableContent(videoId)
-                .subscribe(this::onSuccess, this::onError);
+        Disposable url = playerUseCase.execute(new DisposableSingleObserver<PlayerResponse>() {
+            @Override
+            public void onSuccess(PlayerResponse playerResponse) {
+                mPlayerResponse.setValue(playerResponse);
+            }
 
-        compositeDisposable.add(player);
-    }
+            @Override
+            public void onError(Throwable e) {
 
-    /**
-     * Gets called when the playable content is retrieved
-     *
-     * @param playerResponse represents an instance of {@link PlayerResponse}
-     */
-    private void onSuccess(@NonNull PlayerResponse playerResponse) {
-        mPlayerResponse.setValue(playerResponse);
-    }
+            }
+        }, videoId);
 
-    /**
-     * Gets called when there is an error
-     *
-     * @param throwable represents any error
-     */
-    private void onError(@NonNull Throwable throwable) {
-
+        compositeDisposable.add(url);
     }
 
     /**

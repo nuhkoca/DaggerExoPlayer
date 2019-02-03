@@ -28,8 +28,10 @@ public class VideoActivity extends DaggerAppCompatActivity implements ExoUtil.Pl
     private ActivityVideoBinding mActivityVideoBinding;
     private ExoUtil exoUtil;
 
-    @Inject ViewModelProvider.Factory viewModelFactory;
-    @Inject Lazy<ExoUtilFactory> exoUtilFactory;
+    @Inject
+    ViewModelProvider.Factory viewModelFactory;
+    @Inject
+    Lazy<ExoUtilFactory> exoUtilFactory;
 
     /**
      * Initializes the activity
