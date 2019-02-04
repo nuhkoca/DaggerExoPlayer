@@ -46,6 +46,7 @@ public class AuthInterceptor implements Interceptor {
         Request.Builder requestBuilder = original.newBuilder().url(url);
         Request newRequest = requestBuilder
                 .addHeader("Authorization", "Bearer " + BuildConfig.ACCESS_TOKEN)
+                .addHeader("Connection", "close")
                 .method(chain.request().method(), chain.request().body())
                 .build();
 
