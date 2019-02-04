@@ -54,7 +54,7 @@ public abstract class UseCase<M, P> {
      *
      * @return an instance of {@link PlayerRepository}
      */
-    public PlayerRepository getPlayerRepository() {
+    protected PlayerRepository getPlayerRepository() {
         return playerRepository;
     }
 }
