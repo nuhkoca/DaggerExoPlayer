@@ -4,7 +4,6 @@
     <string name="network_call_initial_error">An error occurred. Please try again.</string>
     <string name="network_call_empty_response">No result found. Please try again.</string>
     <string name="network_call_pagination_error">An error occurred. Please try again.</string>
-    <string name="auth_error">An auth error occurred. Please try again later.</string>
     <string name="duration_placeholder">Duration: %s</string>
     <string name="retry_text">Try Again</string>
 </resources>
