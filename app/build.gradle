@@ -4,13 +4,13 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion Versions.compile_sdk
+    compileSdkVersion androidConfig.compileSdk
     defaultConfig {
         applicationId "com.nuhkoca.myapplication"
-        minSdkVersion Versions.min_sdk
-        targetSdkVersion Versions.target_sdk
-        versionCode Versions.version_code
-        versionName Versions.version_name
+        minSdkVersion androidConfig.minSdk
+        targetSdkVersion androidConfig.targetSdk
+        versionCode 1
+        versionName getVersionName()
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -44,36 +44,38 @@ android {
 }
 
 dependencies {
-    implementation  fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation  Libs.kotlin
-    implementation  Libs.x
-    implementation  Libs.material
-    implementation  Libs.recycler_view
-    implementation  Libs.card_view
-    implementation  Libs.constraint_layout
-    implementation  Libs.exo_player
-    implementation  Libs.paging
-    implementation  Libs.paging_runtime
-    implementation  Libs.lifecycle
-    implementation  Libs.dagger
-    implementation  Libs.dagger_android
-    implementation  Libs.dagger_support
-    kapt            Libs.dagger_processor
-    kapt            Libs.dagger_compiler
-    implementation  Libs.rxandroid
-    implementation  Libs.rxjava
-    implementation  Libs.jetbrains
-    implementation  Libs.rxjava_adapter
-    implementation  Libs.retrofit
-    implementation  Libs.gson
-    implementation  Libs.logging
-    implementation  Libs.glide
-    kapt            Libs.glide_compiler
-    implementation  (Libs.glide_okhttp) {
+    implementation Libs.kotlin
+    implementation Libs.x
+    implementation Libs.material
+    implementation Libs.constraint_layout
+    implementation Libs.exo_player
+    implementation Libs.paging
+    implementation Libs.paging_runtime
+    implementation Libs.lifecycle
+    implementation Libs.dagger
+    implementation Libs.dagger_android
+    implementation Libs.dagger_support
+    kapt           Libs.dagger_processor
+    kapt           Libs.dagger_compiler
+    implementation Libs.rxandroid
+    implementation Libs.rxjava
+    implementation Libs.jetbrains
+    implementation Libs.rxjava_adapter
+    implementation Libs.retrofit
+    implementation Libs.gson
+    implementation Libs.logging
+    implementation Libs.glide
+    kapt           Libs.glide_compiler
+    implementation(Libs.glide_okhttp) {
         exclude group: 'glide-parent'
     }
 }
-repositories {
-    mavenCentral()
+
+static def getVersionName() {
+    def majorCode = 1
+    def minorCode = 0
+    def patchCode = 0
+    return "${majorCode}.${minorCode}.${patchCode}"
 }

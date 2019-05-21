@@ -7,11 +7,6 @@ import com.nuhkoca.myapplication.BuildConfig
 import com.nuhkoca.myapplication.api.AuthInterceptor
 import com.nuhkoca.myapplication.api.IExoAPI
 import com.nuhkoca.myapplication.helper.Constants
-
-import java.util.concurrent.TimeUnit
-
-import javax.inject.Named
-import javax.inject.Singleton
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
@@ -19,6 +14,9 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
+import javax.inject.Named
+import javax.inject.Singleton
 
 /**
  * A [Module] that handles network injections
@@ -37,10 +35,10 @@ class NetModule {
     @Singleton
     internal fun provideGson(): Gson {
         return GsonBuilder()
-                .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
-                .serializeNulls()
-                .setLenient()
-                .create()
+            .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
+            .serializeNulls()
+            .setLenient()
+            .create()
     }
 
     /**
@@ -52,7 +50,7 @@ class NetModule {
     @Singleton
     internal fun provideHttpLoggingInterceptor(): HttpLoggingInterceptor {
         return HttpLoggingInterceptor()
-                .setLevel(HttpLoggingInterceptor.Level.BODY)
+            .setLevel(HttpLoggingInterceptor.Level.BODY)
     }
 
     /**
@@ -64,7 +62,10 @@ class NetModule {
      */
     @Provides
     @Singleton
-    internal fun provideOkHttpClient(httpLoggingInterceptor: HttpLoggingInterceptor, authInterceptor: AuthInterceptor): OkHttpClient {
+    internal fun provideOkHttpClient(
+        httpLoggingInterceptor: HttpLoggingInterceptor,
+        authInterceptor: AuthInterceptor
+    ): OkHttpClient {
         val httpClient = OkHttpClient.Builder()
         httpClient.connectTimeout(Constants.DEFAULT_TIMEOUT.toLong(), TimeUnit.SECONDS)
         httpClient.readTimeout(Constants.DEFAULT_TIMEOUT.toLong(), TimeUnit.SECONDS)
@@ -99,11 +100,11 @@ class NetModule {
     @Named("video")
     internal fun provideRetrofitVideo(okHttpClient: OkHttpClient, gson: Gson): Retrofit {
         return Retrofit.Builder()
-                .baseUrl(BuildConfig.BASE_URL)
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .client(okHttpClient)
-                .build()
+            .baseUrl(BuildConfig.BASE_URL)
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .client(okHttpClient)
+            .build()
     }
 
     /**
@@ -117,10 +118,10 @@ class NetModule {
     @Named("player")
     internal fun provideRetrofitPlayer(gson: Gson): Retrofit {
         return Retrofit.Builder()
-                .baseUrl(BuildConfig.BASE_PLAYER_URL)
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .build()
+            .baseUrl(BuildConfig.BASE_PLAYER_URL)
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .build()
     }
 
     /**

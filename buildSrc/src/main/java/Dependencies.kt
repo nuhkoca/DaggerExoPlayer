@@ -1,32 +1,26 @@
 object Versions {
-    const val compile_sdk = 28
-    const val min_sdk = 21
-    const val target_sdk = 28
+    const val kotlin_gradle_version = "1.3.31"
+    const val gradle_version = "3.4.1"
 
-    const val version_code = 1
-    const val version_name = "1.0"
-
-    const val x = "1.1.0-alpha01"
-    const val material = "1.0.0"
-    const val constraint_layout = "1.1.3"
-    const val exo_player = "2.9.4"
-    const val dagger = "2.21"
+    const val x = "1.1.0-alpha05"
+    const val material = "1.1.0-alpha06"
+    const val constraint_layout = "2.0.0-beta1"
+    const val exo_player = "2.10.1"
+    const val dagger = "2.22.1"
     const val paging = "2.1.0"
-    const val livedata = "2.0.0"
-    const val rxjava = "2.2.2"
-    const val rxandroid = "2.1.0"
-    const val jetbrains = "16.0.3"
+    const val livedata = "2.2.0-alpha01"
+    const val rxjava = "2.2.8"
+    const val rxandroid = "2.1.1"
+    const val jetbrains = "17.0.0"
     const val retrofit = "2.5.0"
-    const val okhttp = "3.12.0"
-    const val glide = "4.8.0"
+    const val okhttp = "3.14.2"
+    const val glide = "4.9.0"
     const val kotlin_version = "1.3.21"
 }
 
 object Libs {
     const val x = "androidx.appcompat:appcompat:${Versions.x}"
     const val material = "com.google.android.material:material:${Versions.material}"
-    const val recycler_view = "androidx.recyclerview:recyclerview:${Versions.material}"
-    const val card_view = "androidx.cardview:cardview:${Versions.material}"
     const val constraint_layout = "androidx.constraintlayout:constraintlayout:${Versions.constraint_layout}"
     const val exo_player = "com.google.android.exoplayer:exoplayer:${Versions.exo_player}"
     const val paging = "androidx.paging:paging-common:${Versions.paging}"

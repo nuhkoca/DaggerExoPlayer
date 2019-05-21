@@ -1,11 +1,11 @@
 package com.nuhkoca.myapplication.di.module
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.nuhkoca.myapplication.di.qualifier.ViewModelKey
 import com.nuhkoca.myapplication.ui.main.MainViewModel
 import com.nuhkoca.myapplication.ui.video.VideoViewModel
 import com.nuhkoca.myapplication.vm.ExoViewModelFactory
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap

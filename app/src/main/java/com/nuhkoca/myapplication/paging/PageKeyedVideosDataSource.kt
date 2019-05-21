@@ -9,7 +9,7 @@ import com.nuhkoca.myapplication.data.remote.video.VideoResponse
 import com.nuhkoca.myapplication.data.remote.video.VideoWrapper
 import com.nuhkoca.myapplication.repository.VideoRepository
 import io.reactivex.disposables.CompositeDisposable
-import java.util.*
+import java.util.ArrayList
 import javax.inject.Inject
 
 /**
@@ -17,8 +17,10 @@ import javax.inject.Inject
  *
  * @author nuhkoca
  */
-class PageKeyedVideosDataSource @Inject internal constructor(private val videoRepository: VideoRepository,
-                     private val context: Context, private val compositeDisposable: CompositeDisposable) : PageKeyedDataSource<Int, VideoResponse>(), IPaginationCallback<VideoWrapper, VideoResponse> {
+class PageKeyedVideosDataSource @Inject internal constructor(
+    private val videoRepository: VideoRepository,
+    private val context: Context, private val compositeDisposable: CompositeDisposable
+) : PageKeyedDataSource<Int, VideoResponse>(), IPaginationCallback<VideoWrapper, VideoResponse> {
 
     /**
      * Returns network state
@@ -40,19 +42,22 @@ class PageKeyedVideosDataSource @Inject internal constructor(private val videoRe
      * @param callback * Callback for [.loadInitial]
      * to return data and, optionally, position/count information.
      */
-    override fun loadInitial(params: PageKeyedDataSource.LoadInitialParams<Int>, callback: PageKeyedDataSource.LoadInitialCallback<Int, VideoResponse>) {
+    override fun loadInitial(params: LoadInitialParams<Int>, callback: LoadInitialCallback<Int, VideoResponse>) {
         val videoResponses = ArrayList<VideoResponse>()
 
         networkState.postValue(NetworkState.LOADING)
         initialLoading.postValue(NetworkState.LOADING)
 
         val artist = videoRepository.getVideoList(1)
-                .subscribe({ videoWrapper -> onInitialSuccess(videoWrapper.body()!!, callback, videoResponses) }, { this.onInitialError(it) })
+            .subscribe(
+                { videoWrapper -> onInitialSuccess(videoWrapper.body()!!, callback, videoResponses) },
+                ::onInitialError
+            )
 
         compositeDisposable.add(artist)
     }
 
-    override fun loadBefore(params: PageKeyedDataSource.LoadParams<Int>, callback: PageKeyedDataSource.LoadCallback<Int, VideoResponse>) {
+    override fun loadBefore(params: LoadParams<Int>, callback: LoadCallback<Int, VideoResponse>) {
 
     }
 
@@ -63,13 +68,19 @@ class PageKeyedVideosDataSource @Inject internal constructor(private val videoRe
      * @param callback * Callback for [.loadAfter] (LoadParams, LoadCallback)}
      * to return data and, optionally, position/count information.
      */
-    override fun loadAfter(params: PageKeyedDataSource.LoadParams<Int>, callback: PageKeyedDataSource.LoadCallback<Int, VideoResponse>) {
+    override fun loadAfter(
+        params: LoadParams<Int>,
+        callback: LoadCallback<Int, VideoResponse>
+    ) {
         val videoResponses = ArrayList<VideoResponse>()
 
         networkState.postValue(NetworkState.LOADING)
 
         val artist = videoRepository.getVideoList(params.key)
-                .subscribe({ videoWrapper -> onPaginationSuccess(videoWrapper.body()!!, callback, params, videoResponses) }, { this.onPaginationError(it) })
+            .subscribe(
+                { videoWrapper -> onPaginationSuccess(videoWrapper.body()!!, callback, params, videoResponses) },
+                ::onPaginationError
+            )
 
         compositeDisposable.add(artist)
     }
@@ -91,10 +102,24 @@ class PageKeyedVideosDataSource @Inject internal constructor(private val videoRe
      * @param callback represents [LoadInitialCallback]
      * @param model    represents the actual response
      */
-    override fun onInitialSuccess(wrapper: VideoWrapper, callback: LoadInitialCallback<Int, VideoResponse>, model: MutableList<VideoResponse>) {
+    override fun onInitialSuccess(
+        wrapper: VideoWrapper,
+        callback: LoadInitialCallback<Int, VideoResponse>,
+        model: MutableList<VideoResponse>
+    ) {
         if (wrapper.data == null || wrapper.data.size == 0) {
-            initialLoading.postValue(NetworkState(NetworkState.Status.NO_ITEM, context.getString(R.string.network_call_empty_response)))
-            networkState.postValue(NetworkState(NetworkState.Status.NO_ITEM, context.getString(R.string.network_call_empty_response)))
+            initialLoading.postValue(
+                NetworkState(
+                    NetworkState.Status.NO_ITEM,
+                    context.getString(R.string.network_call_empty_response)
+                )
+            )
+            networkState.postValue(
+                NetworkState(
+                    NetworkState.Status.NO_ITEM,
+                    context.getString(R.string.network_call_empty_response)
+                )
+            )
             return
         }
 
@@ -113,7 +138,12 @@ class PageKeyedVideosDataSource @Inject internal constructor(private val videoRe
      * @param throwable represents any error
      */
     override fun onPaginationError(throwable: Throwable) {
-        networkState.postValue(NetworkState(NetworkState.Status.FAILED, context.getString(R.string.network_call_initial_error)))
+        networkState.postValue(
+            NetworkState(
+                NetworkState.Status.FAILED,
+                context.getString(R.string.network_call_initial_error)
+            )
+        )
     }
 
     /**
@@ -123,9 +153,19 @@ class PageKeyedVideosDataSource @Inject internal constructor(private val videoRe
      * @param callback represents [LoadInitialCallback]
      * @param model    represents the actual response
      */
-    override fun onPaginationSuccess(wrapper: VideoWrapper, callback: LoadCallback<Int, VideoResponse>, params: LoadParams<Int>, model: MutableList<VideoResponse>) {
+    override fun onPaginationSuccess(
+        wrapper: VideoWrapper,
+        callback: LoadCallback<Int, VideoResponse>,
+        params: LoadParams<Int>,
+        model: MutableList<VideoResponse>
+    ) {
         if (wrapper.data == null || wrapper.data.size == 0) {
-            networkState.postValue(NetworkState(NetworkState.Status.NO_ITEM, context.getString(R.string.network_call_empty_response)))
+            networkState.postValue(
+                NetworkState(
+                    NetworkState.Status.NO_ITEM,
+                    context.getString(R.string.network_call_empty_response)
+                )
+            )
             return
         }
 

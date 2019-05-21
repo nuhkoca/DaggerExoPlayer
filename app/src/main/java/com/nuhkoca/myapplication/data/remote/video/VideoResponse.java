@@ -110,7 +110,7 @@ public class VideoResponse extends BaseObservable {
 
         VideoResponse videoResponse = (VideoResponse) obj;
 
-        return videoResponse.uri.equals(this.uri);
+        return videoResponse.uri.equals(uri);
     }
 
     @NonNull

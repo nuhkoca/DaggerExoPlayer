@@ -1,10 +1,9 @@
 package com.nuhkoca.myapplication.di.module
 
+import androidx.databinding.BindingAdapter
 import com.nuhkoca.myapplication.binding.ImageBindingAdapter
 import com.nuhkoca.myapplication.binding.SpannableTextBindingAdapter
 import com.nuhkoca.myapplication.di.scope.DataBinding
-
-import androidx.databinding.BindingAdapter
 import dagger.Module
 import dagger.Provides
 

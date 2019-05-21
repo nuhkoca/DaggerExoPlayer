@@ -1,7 +1,6 @@
 package com.nuhkoca.myapplication.di.module
 
 import android.content.Context
-
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.DefaultLoadControl
 import com.google.android.exoplayer2.DefaultRenderersFactory
@@ -9,7 +8,9 @@ import com.google.android.exoplayer2.ExoPlayerFactory
 import com.google.android.exoplayer2.LoadControl
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.audio.AudioAttributes
-import com.google.android.exoplayer2.source.ExtractorMediaSource
+import com.google.android.exoplayer2.database.DatabaseProvider
+import com.google.android.exoplayer2.database.ExoDatabaseProvider
+import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.TrackSelection
@@ -27,16 +28,14 @@ import com.google.android.exoplayer2.util.Util
 import com.nuhkoca.myapplication.R
 import com.nuhkoca.myapplication.helper.Constants
 import com.nuhkoca.myapplication.helper.DefaultCacheDataSourceFactory
-
+import dagger.Module
+import dagger.Provides
+import dagger.Reusable
 import java.io.File
 import java.net.CookieHandler
 import java.net.CookieManager
 import java.net.CookiePolicy
-
 import javax.inject.Singleton
-import dagger.Module
-import dagger.Provides
-import dagger.Reusable
 
 /**
  * A [Module] that injects ExoPlayer
@@ -65,8 +64,8 @@ class ExoModule {
      */
     @Singleton
     @Provides
-    fun provideDefaultBandwidthMeter(): DefaultBandwidthMeter {
-        return DefaultBandwidthMeter()
+    fun provideDefaultBandwidthMeter(context: Context): DefaultBandwidthMeter {
+        return DefaultBandwidthMeter.Builder(context).build()
     }
 
     /**
@@ -139,9 +138,9 @@ class ExoModule {
     @Provides
     fun provideAudioAttributes(): AudioAttributes {
         return AudioAttributes.Builder()
-                .setUsage(C.USAGE_MEDIA)
-                .setContentType(C.CONTENT_TYPE_SPEECH)
-                .build()
+            .setUsage(C.USAGE_MEDIA)
+            .setContentType(C.CONTENT_TYPE_SPEECH)
+            .build()
     }
 
     /**
@@ -155,15 +154,17 @@ class ExoModule {
      * @return an instance of [SimpleExoPlayer]
      */
     @Provides
-    fun provideExoPlayer(context: Context,
-                         renderersFactory: DefaultRenderersFactory,
-                         trackSelector: DefaultTrackSelector,
-                         loadControl: LoadControl,
-                         audioAttributes: AudioAttributes): SimpleExoPlayer {
-        val exoPlayer = ExoPlayerFactory.newSimpleInstance(context, renderersFactory, trackSelector, loadControl)
-        exoPlayer.setAudioAttributes(audioAttributes, true)
-        exoPlayer.videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
-        return exoPlayer
+    fun provideExoPlayer(
+        context: Context,
+        renderersFactory: DefaultRenderersFactory,
+        trackSelector: DefaultTrackSelector,
+        loadControl: LoadControl,
+        audioAttributes: AudioAttributes
+    ): SimpleExoPlayer {
+        return ExoPlayerFactory.newSimpleInstance(context, renderersFactory, trackSelector, loadControl).apply {
+            setAudioAttributes(audioAttributes, true)
+            videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
+        }
     }
 
     /**
@@ -176,9 +177,11 @@ class ExoModule {
      */
     @Reusable
     @Provides
-    fun provideDefaultDataSourceFactory(context: Context,
-                                        bandwidthMeter: DefaultBandwidthMeter,
-                                        factory: HttpDataSource.Factory): DefaultDataSourceFactory {
+    fun provideDefaultDataSourceFactory(
+        context: Context,
+        bandwidthMeter: DefaultBandwidthMeter,
+        factory: HttpDataSource.Factory
+    ): DefaultDataSourceFactory {
         return DefaultDataSourceFactory(context, bandwidthMeter, factory)
     }
 
@@ -213,8 +216,14 @@ class ExoModule {
      */
     @Reusable
     @Provides
-    fun provideExtractorMediaSourceFactory(factory: DataSource.Factory): ExtractorMediaSource.Factory {
-        return ExtractorMediaSource.Factory(factory)
+    fun provideExtractorMediaSourceFactory(factory: DataSource.Factory): ProgressiveMediaSource.Factory {
+        return ProgressiveMediaSource.Factory(factory)
+    }
+
+    @Singleton
+    @Provides
+    fun provideDatabaseProvider(context: Context): DatabaseProvider {
+        return ExoDatabaseProvider(context)
     }
 
     /**
@@ -226,8 +235,12 @@ class ExoModule {
      */
     @Singleton
     @Provides
-    fun provideSimpleCache(context: Context, evictor: LeastRecentlyUsedCacheEvictor): SimpleCache {
-        return SimpleCache(File(context.cacheDir, context.getString(R.string.cache_type)), evictor)
+    fun provideSimpleCache(
+        context: Context,
+        evictor: LeastRecentlyUsedCacheEvictor,
+        databaseProvider: DatabaseProvider
+    ): SimpleCache {
+        return SimpleCache(File(context.cacheDir, context.getString(R.string.cache_type)), evictor, databaseProvider)
     }
 
     /**
@@ -240,11 +253,15 @@ class ExoModule {
      */
     @Reusable
     @Provides
-    fun provideCacheDataSource(simpleCache: SimpleCache,
-                               factory: DefaultDataSourceFactory,
-                               cacheDataSink: CacheDataSink): CacheDataSource {
-        return CacheDataSource(simpleCache, factory.createDataSource(), FileDataSource(), cacheDataSink,
-                CacheDataSource.FLAG_BLOCK_ON_CACHE or CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR, null)
+    fun provideCacheDataSource(
+        simpleCache: SimpleCache,
+        factory: DefaultDataSourceFactory,
+        cacheDataSink: CacheDataSink
+    ): CacheDataSource {
+        return CacheDataSource(
+            simpleCache, factory.createDataSource(), FileDataSource(), cacheDataSink,
+            CacheDataSource.FLAG_BLOCK_ON_CACHE or CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR, null
+        )
     }
 
     /**

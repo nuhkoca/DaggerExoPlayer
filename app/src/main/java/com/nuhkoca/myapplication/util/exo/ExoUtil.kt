@@ -6,8 +6,8 @@ import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.PlaybackPreparer
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
-import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.source.MediaSource
+import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.exoplayer2.util.Util
 import com.nuhkoca.myapplication.helper.Constants
@@ -30,9 +30,11 @@ class ExoUtil
  * @param preferenceUtil represents an instance of [PreferenceUtil]
  */
 @Inject
-internal constructor(private val exoPlayer: Provider<SimpleExoPlayer>,
-                     private val factory: ExtractorMediaSource.Factory,
-                     private val preferenceUtil: PreferenceUtil) : PlaybackPreparer, Player.EventListener {
+internal constructor(
+    private val exoPlayer: Provider<SimpleExoPlayer>,
+    private val factory: ProgressiveMediaSource.Factory,
+    private val preferenceUtil: PreferenceUtil
+) : PlaybackPreparer, Player.EventListener {
 
     private var simpleExoPlayer: SimpleExoPlayer? = null
 
