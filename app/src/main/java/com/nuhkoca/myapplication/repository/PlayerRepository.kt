@@ -1,14 +1,12 @@
 package com.nuhkoca.myapplication.repository
 
-
 import com.nuhkoca.myapplication.api.IExoAPI
 import com.nuhkoca.myapplication.data.remote.player.PlayerResponse
-
-import javax.inject.Inject
-import javax.inject.Named
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import javax.inject.Inject
+import javax.inject.Named
 
 /**
  * A repository layer that handles playable content
@@ -32,7 +30,7 @@ internal constructor(@param:Named("playerService") private val iExoAPI: IExoAPI)
      */
     fun getPlayableContent(videoId: String): Single<PlayerResponse> {
         return iExoAPI.getPlayableContent(videoId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
     }
 }

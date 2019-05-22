@@ -15,9 +15,10 @@ class ExoUtilFactory
  */
 @Inject
 internal constructor(
-        /**
-         * Returns an instance of [ExoUtil]
-         *
-         * @return an instance of [ExoUtil]
-         */
-        val exoUtil: ExoUtil)
+    /**
+     * Returns an instance of [ExoUtil]
+     *
+     * @return an instance of [ExoUtil]
+     */
+    val exoUtil: ExoUtil
+)

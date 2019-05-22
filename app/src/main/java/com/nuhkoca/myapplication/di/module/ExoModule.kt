@@ -137,10 +137,10 @@ class ExoModule {
     @Singleton
     @Provides
     fun provideAudioAttributes(): AudioAttributes {
-        return AudioAttributes.Builder()
-            .setUsage(C.USAGE_MEDIA)
-            .setContentType(C.CONTENT_TYPE_SPEECH)
-            .build()
+        return AudioAttributes.Builder().apply {
+            setUsage(C.USAGE_MEDIA)
+            setContentType(C.CONTENT_TYPE_SPEECH)
+        }.build()
     }
 
     /**
@@ -209,17 +209,23 @@ class ExoModule {
     }
 
     /**
-     * Returns an instance of [ExtractorMediaSource.Factory]
+     * Returns an instance of [ProgressiveMediaSource.Factory]
      *
      * @param factory represents an instance of [DataSource.Factory]
-     * @return an instance of [ExtractorMediaSource.Factory]
+     * @return an instance of [ProgressiveMediaSource.Factory]
      */
     @Reusable
     @Provides
-    fun provideExtractorMediaSourceFactory(factory: DataSource.Factory): ProgressiveMediaSource.Factory {
+    fun provideProgressiveMediaSourceFactory(factory: DataSource.Factory): ProgressiveMediaSource.Factory {
         return ProgressiveMediaSource.Factory(factory)
     }
 
+    /**
+     * Provides an instance of [ExoDatabaseProvider]
+     *
+     * @param context represents an instance of [Context]
+     * @return an instance of [ExoDatabaseProvider]
+     */
     @Singleton
     @Provides
     fun provideDatabaseProvider(context: Context): DatabaseProvider {
@@ -284,12 +290,12 @@ class ExoModule {
     @Singleton
     @Provides
     fun provideCookieManager(): CookieManager {
-        val cookieManager = CookieManager()
-        cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ORIGINAL_SERVER)
-        return cookieManager
+        return CookieManager().apply {
+            setCookiePolicy(CookiePolicy.ACCEPT_ORIGINAL_SERVER)
+        }
     }
 
-    /**
+    /**"
      * Returns an instance of [CookieHandler]
      *
      * @param cookieManager represents an instance of [CookieManager]
@@ -298,10 +304,10 @@ class ExoModule {
     @Singleton
     @Provides
     fun provideCookieHandler(cookieManager: CookieManager): CookieHandler {
-        if (CookieHandler.getDefault() !== cookieManager) {
-            CookieHandler.setDefault(cookieManager)
+        return CookieHandler.getDefault().apply {
+            if (this != cookieManager) {
+                CookieHandler.setDefault(cookieManager)
+            }
         }
-
-        return CookieHandler.getDefault()
     }
 }

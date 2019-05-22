@@ -1,8 +1,0 @@
-apply plugin: 'com.github.ben-manes.versions'
-
-dependencyUpdates {
-    checkForGradleUpdate = true
-    outputFormatter = "json"
-    outputDir = "build/dependencyUpdates"
-    reportfileName = "report"
-}

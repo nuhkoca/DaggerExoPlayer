@@ -26,7 +26,7 @@ class ExoUtil
  * A default constructor that injects dependencies
  *
  * @param exoPlayer      represents an instance of [SimpleExoPlayer]
- * @param factory        represents an instance of [ExtractorMediaSource.Factory]
+ * @param factory        represents an instance of [ProgressiveMediaSource.Factory]
  * @param preferenceUtil represents an instance of [PreferenceUtil]
  */
 @Inject

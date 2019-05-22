@@ -34,11 +34,11 @@ class NetModule {
     @Provides
     @Singleton
     internal fun provideGson(): Gson {
-        return GsonBuilder()
-            .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
-            .serializeNulls()
-            .setLenient()
-            .create()
+        return GsonBuilder().apply {
+            setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
+            serializeNulls()
+            setLenient()
+        }.create()
     }
 
     /**
@@ -66,15 +66,14 @@ class NetModule {
         httpLoggingInterceptor: HttpLoggingInterceptor,
         authInterceptor: AuthInterceptor
     ): OkHttpClient {
-        val httpClient = OkHttpClient.Builder()
-        httpClient.connectTimeout(Constants.DEFAULT_TIMEOUT.toLong(), TimeUnit.SECONDS)
-        httpClient.readTimeout(Constants.DEFAULT_TIMEOUT.toLong(), TimeUnit.SECONDS)
-        httpClient.writeTimeout(Constants.DEFAULT_TIMEOUT.toLong(), TimeUnit.SECONDS)
+        return OkHttpClient.Builder().apply {
+            connectTimeout(Constants.DEFAULT_TIMEOUT.toLong(), TimeUnit.SECONDS)
+            readTimeout(Constants.DEFAULT_TIMEOUT.toLong(), TimeUnit.SECONDS)
+            writeTimeout(Constants.DEFAULT_TIMEOUT.toLong(), TimeUnit.SECONDS)
 
-        httpClient.addInterceptor(authInterceptor)
-        httpClient.interceptors().add(httpLoggingInterceptor)
-
-        return httpClient.build()
+            addInterceptor(authInterceptor)
+            interceptors().add(httpLoggingInterceptor)
+        }.build()
     }
 
     /**
@@ -99,12 +98,12 @@ class NetModule {
     @Singleton
     @Named("video")
     internal fun provideRetrofitVideo(okHttpClient: OkHttpClient, gson: Gson): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl(BuildConfig.BASE_URL)
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .client(okHttpClient)
-            .build()
+        return Retrofit.Builder().apply {
+            baseUrl(BuildConfig.BASE_URL)
+            addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            addConverterFactory(GsonConverterFactory.create(gson))
+            client(okHttpClient)
+        }.build()
     }
 
     /**
@@ -117,11 +116,11 @@ class NetModule {
     @Singleton
     @Named("player")
     internal fun provideRetrofitPlayer(gson: Gson): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl(BuildConfig.BASE_PLAYER_URL)
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .build()
+        return Retrofit.Builder().apply {
+            baseUrl(BuildConfig.BASE_PLAYER_URL)
+            addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            addConverterFactory(GsonConverterFactory.create(gson))
+        }.build()
     }
 
     /**

@@ -1,18 +1,17 @@
 package com.nuhkoca.myapplication.paging
 
-
-import com.nuhkoca.myapplication.data.remote.video.VideoResponse
-
-import javax.inject.Inject
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.DataSource
+import com.nuhkoca.myapplication.data.remote.video.VideoResponse
+import javax.inject.Inject
 
 /**
  * A factory class for [PageKeyedVideosDataSource]
  *
  * @author nuhkoca
  */
-class VideoResultDataSourceFactory @Inject internal constructor(val pageKeyedVideosDataSource: PageKeyedVideosDataSource) : DataSource.Factory<Int, VideoResponse>() {
+class VideoResultDataSourceFactory @Inject internal constructor(val pageKeyedVideosDataSource: PageKeyedVideosDataSource) :
+    DataSource.Factory<Int, VideoResponse>() {
 
     /**
      * Returns [VideoResultDataSourceFactory.mPageKeyedVideosDataSourceMutableLiveData]

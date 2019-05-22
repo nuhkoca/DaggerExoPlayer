@@ -1,6 +1,6 @@
 package com.nuhkoca.myapplication.api
 
-
+import com.nuhkoca.myapplication.api.NetworkState.Status
 import javax.inject.Inject
 
 /**

@@ -33,15 +33,15 @@ constructor() : Interceptor {
         val original = chain.request()
         val originalUrl = original.url()
         val url = originalUrl.newBuilder()
-                .addQueryParameter(Constants.TRENDING_KEY, Constants.TRENDING_VALUE)
-                .addQueryParameter(Constants.LIKES_KEY, Constants.LIKES_VALUE)
-                .build()
+            .addQueryParameter(Constants.TRENDING_KEY, Constants.TRENDING_VALUE)
+            .addQueryParameter(Constants.LIKES_KEY, Constants.LIKES_VALUE)
+            .build()
         val requestBuilder = original.newBuilder().url(url)
         val newRequest = requestBuilder
-                .addHeader("Authorization", "Bearer " + BuildConfig.ACCESS_TOKEN)
-                .addHeader("Connection", "close")
-                .method(chain.request().method(), chain.request().body())
-                .build()
+            .addHeader("Authorization", "Bearer " + BuildConfig.ACCESS_TOKEN)
+            .addHeader("Connection", "close")
+            .method(chain.request().method(), chain.request().body())
+            .build()
 
         return chain.proceed(newRequest)
     }

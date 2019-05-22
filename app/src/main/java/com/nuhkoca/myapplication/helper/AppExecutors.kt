@@ -24,7 +24,10 @@ private constructor(private val diskIO: Executor, private val networkIO: Executo
     private val mainIO: Executor
 
     @Inject
-    internal constructor() : this(Executors.newSingleThreadExecutor(), Executors.newFixedThreadPool(Constants.EXECUTOR_THREAD_POOL_OFFSET))
+    internal constructor() : this(
+        Executors.newSingleThreadExecutor(),
+        Executors.newFixedThreadPool(Constants.EXECUTOR_THREAD_POOL_OFFSET)
+    )
 
     init {
         this.mainIO = MainThreadExecutor()

@@ -19,7 +19,7 @@ class App : DaggerApplication() {
      * @return the injector
      */
     override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
-        val appComponent = DaggerAppComponent.builder().application(this).build()
+        val appComponent = DaggerAppComponent.factory().create(this)
         appComponent.inject(this)
 
         val bindingComponent = DaggerBindingComponent.builder().appComponent(appComponent).build()

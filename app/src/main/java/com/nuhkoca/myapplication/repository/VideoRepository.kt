@@ -1,6 +1,5 @@
 package com.nuhkoca.myapplication.repository
 
-
 import android.content.Context
 import com.nuhkoca.myapplication.api.IExoAPI
 import com.nuhkoca.myapplication.base.BaseRepository
@@ -35,8 +34,8 @@ internal constructor(@Named("videoService") iExoAPI: IExoAPI, context: Context) 
      */
     fun getVideoList(page: Int): Single<Response<VideoWrapper>> {
         return iExoAPIService.getVideoList(page)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .flatMap { interceptError(it) }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .flatMap { interceptError(it) }
     }
 }
