@@ -25,20 +25,24 @@ class SpannableTextBindingAdapter @Inject constructor() {
      * @param placeholder represents the resource to be bold
      */
     @BindingAdapter(value = ["android:duration", "android:placeholder"])
-    fun bindSpannableDuration(target: TextView, duration: Int, @StringRes placeholder: Int) {
-        val context = target.context
+    fun TextView.bindSpannableDuration(duration: Int, @StringRes placeholder: Int) {
+        val context = context
 
         val min = duration / 60
         val sec = duration % 60
 
-        val formattedDuration = String.format(Constants.locale, "%02d", min) + ":" + String.format(Constants.locale, "%02d", sec)
+        val formattedDuration =
+            String.format(Constants.locale, "%02d", min) + ":" + String.format(Constants.locale, "%02d", sec)
 
         val boldSpan = SpannableString(
-                String.format(context.getString(placeholder), formattedDuration))
+            String.format(context.getString(placeholder), formattedDuration)
+        )
 
         val lengthToColon = boldSpan.toString().indexOf(":")
-        boldSpan.setSpan(StyleSpan(Typeface.BOLD),
-                0, lengthToColon, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        target.text = boldSpan
+        boldSpan.setSpan(
+            StyleSpan(Typeface.BOLD),
+            0, lengthToColon, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        text = boldSpan
     }
 }

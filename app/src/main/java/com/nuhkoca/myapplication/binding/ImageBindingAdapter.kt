@@ -2,11 +2,9 @@ package com.nuhkoca.myapplication.binding
 
 import android.text.TextUtils
 import android.widget.ImageView
-
-import com.nuhkoca.myapplication.di.module.ExoGlide
-
-import javax.inject.Inject
 import androidx.databinding.BindingAdapter
+import com.nuhkoca.myapplication.di.module.ExoGlide
+import javax.inject.Inject
 
 /**
  * A [BindingAdapter] to bind images into ImageViews.
@@ -22,12 +20,12 @@ class ImageBindingAdapter @Inject constructor() {
      * @param url  represents image url
      */
     @BindingAdapter(value = ["android:src"])
-    fun bindImage(view: ImageView, url: String?) {
+    fun ImageView.bindImage(url: String?) {
         if (!TextUtils.isEmpty(url) || url == null) {
-            ExoGlide.with(view.context)
-                    .asBitmap()
-                    .load(url)
-                    .into(view)
+            ExoGlide.with(context)
+                .asBitmap()
+                .load(url)
+                .into(this)
         }
     }
 }

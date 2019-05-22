@@ -59,9 +59,11 @@ class ExoGlideModule : AppGlideModule() {
      */
     override fun applyOptions(context: Context, builder: GlideBuilder) {
         val memoryCacheSizeBytes = 1024 * 1024 * 300 // 300mb cache
-        builder.setMemoryCache(LruResourceCache(memoryCacheSizeBytes.toLong()))
-        builder.setDiskCache(InternalCacheDiskCacheFactory(context, memoryCacheSizeBytes.toLong()))
-        builder.setDefaultRequestOptions(requestOptions())
+        builder.apply {
+            setMemoryCache(LruResourceCache(memoryCacheSizeBytes.toLong()))
+            setDiskCache(InternalCacheDiskCacheFactory(context, memoryCacheSizeBytes.toLong()))
+            setDefaultRequestOptions(requestOptions())
+        }
     }
 
     /**
@@ -70,19 +72,20 @@ class ExoGlideModule : AppGlideModule() {
      * @return an instance of [RequestOptions]
      */
     private fun requestOptions(): RequestOptions {
-        return RequestOptions()
-            .signature(
+        return RequestOptions().apply {
+            signature(
                 ObjectKey(
                     System.currentTimeMillis() / (168 * 60 * 60 * 1000)
                 )
             ) // 1 week cache
-            .centerCrop()
-            .dontAnimate()
-            .override(Target.SIZE_ORIGINAL)
-            .encodeFormat(Bitmap.CompressFormat.PNG)
-            .encodeQuality(100)
-            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-            .format(PREFER_ARGB_8888)
-            .skipMemoryCache(true)
+            centerCrop()
+            dontAnimate()
+            override(Target.SIZE_ORIGINAL)
+            encodeFormat(Bitmap.CompressFormat.PNG)
+            encodeQuality(100)
+            diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+            format(PREFER_ARGB_8888)
+            skipMemoryCache(true)
+        }
     }
 }

@@ -30,9 +30,9 @@ abstract class UseCase<M, P>(protected val playerRepository: PlayerRepository) {
         }
 
         val observable = this.buildUseCaseObservable(params)
-                .subscribeOn(Schedulers.io())
-                .unsubscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
+            .unsubscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
 
         return observable.subscribeWith(observer)
     }

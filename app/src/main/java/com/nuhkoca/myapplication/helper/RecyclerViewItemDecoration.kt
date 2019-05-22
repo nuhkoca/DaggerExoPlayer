@@ -15,7 +15,8 @@ import androidx.recyclerview.widget.RecyclerView
  *
  * @author nuhkoca
  */
-class RecyclerViewItemDecoration(private val context: Context, orientation: Int, private val margin: Int) : RecyclerView.ItemDecoration() {
+class RecyclerViewItemDecoration(private val context: Context, orientation: Int, private val margin: Int) :
+    RecyclerView.ItemDecoration() {
 
     private val mDivider: Drawable?
     private var mOrientation: Int = 0
@@ -67,7 +68,7 @@ class RecyclerViewItemDecoration(private val context: Context, orientation: Int,
         for (i in 0 until childCount) {
             val child = parent.getChildAt(i)
             val params = child
-                    .layoutParams as RecyclerView.LayoutParams
+                .layoutParams as RecyclerView.LayoutParams
             val top = child.bottom + params.bottomMargin
             val bottom = top + mDivider!!.intrinsicHeight
             mDivider.setBounds(left + dpToPx(margin), top, right - dpToPx(margin), bottom)
