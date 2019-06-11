@@ -9,11 +9,11 @@ import java.util.Objects
 
 data class VideoResponse(
     @SerializedName("uri") var _uri: String,
-    @SerializedName("uri") var _name: String,
-    @SerializedName("uri") var _description: String,
-    @SerializedName("uri") var _pictures: Pictures,
-    @SerializedName("uri") var _status: String,
-    @SerializedName("uri") var _duration: Int
+    @SerializedName("name") var _name: String,
+    @SerializedName("description") var _description: String,
+    @SerializedName("pictures") var _pictures: Pictures,
+    @SerializedName("status") var _status: String,
+    @SerializedName("duration") var _duration: Int
 ) : BaseObservable() {
 
     var uri: String
