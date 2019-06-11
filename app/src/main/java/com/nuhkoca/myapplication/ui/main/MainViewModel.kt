@@ -15,40 +15,35 @@ import javax.inject.Inject
 /**
  * A [androidx.lifecycle.ViewModel] for video result
  *
- * @author nuhkoca
- */
-class MainViewModel
-/**
- * A default constructor that inject required dependencies
- *
  * @param videoResultDataSourceFactory represents an instance of [VideoResultDataSourceFactory]
  * @param appExecutors                 represents an instance of [AppExecutors]
+ *
+ * @author nuhkoca
  */
-@Inject
-internal constructor(private val videoResultDataSourceFactory: VideoResultDataSourceFactory,
-                     private val appExecutors: AppExecutors) : ViewModel() {
+class MainViewModel @Inject constructor(
+    private val videoResultDataSourceFactory: VideoResultDataSourceFactory,
+    private val appExecutors: AppExecutors
+) : ViewModel() {
 
     /**
      * Returns initial network state
      *
      * @return initial network state
      */
-    var initialLoading: LiveData<NetworkState>? = null
+    lateinit var initialLoading: LiveData<NetworkState>
         private set
     /**
      * Returns network state
      *
      * @return network state
      */
-    internal var networkState: LiveData<NetworkState>? = null
-        private set
+    lateinit var networkState: LiveData<NetworkState>
     /**
      * Returns video result
      *
      * @return video result
      */
-    internal var videoResult: LiveData<PagedList<VideoResponse>>? = null
-        private set
+    lateinit var videoResult: LiveData<PagedList<VideoResponse>>
 
     init {
         getVideoList()
@@ -58,27 +53,21 @@ internal constructor(private val videoResultDataSourceFactory: VideoResultDataSo
      * Retrieves video result
      */
     private fun getVideoList() {
-        networkState = Transformations.switchMap(videoResultDataSourceFactory.pageKeyedVideosDataSourceMutableLiveData) { it.networkState }
+        networkState =
+            Transformations.switchMap(videoResultDataSourceFactory.pageKeyedVideosDataSourceMutableLiveData) { it.networkState }
 
-        initialLoading = Transformations.switchMap(videoResultDataSourceFactory.pageKeyedVideosDataSourceMutableLiveData) { it.initialLoading }
+        initialLoading =
+            Transformations.switchMap(videoResultDataSourceFactory.pageKeyedVideosDataSourceMutableLiveData) { it.initialLoading }
 
         val config = PagedList.Config.Builder()
-                .setEnablePlaceholders(false)
-                .setInitialLoadSizeHint(Constants.INITIAL_LOAD_SIZE_HINT) //first load
-                .setPrefetchDistance(Constants.INITIAL_LOAD_SIZE_HINT)
-                .setPageSize(Constants.OFFSET_SIZE) //offset
-                .build()
+            .setEnablePlaceholders(false)
+            .setInitialLoadSizeHint(Constants.INITIAL_LOAD_SIZE_HINT) //first load
+            .setPrefetchDistance(Constants.INITIAL_LOAD_SIZE_HINT)
+            .setPageSize(Constants.OFFSET_SIZE) //offset
+            .build()
 
         videoResult = LivePagedListBuilder(videoResultDataSourceFactory, config)
-                .setFetchExecutor(appExecutors.networkIO())
-                .build()
-    }
-
-    /**
-     * Clears references
-     */
-    override fun onCleared() {
-        videoResultDataSourceFactory.pageKeyedVideosDataSource.clear()
-        super.onCleared()
+            .setFetchExecutor(appExecutors.networkIO())
+            .build()
     }
 }

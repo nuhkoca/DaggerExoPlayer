@@ -55,7 +55,7 @@ class VideoActivity : DaggerAppCompatActivity(), ExoUtil.PlayerStateListener {
             videoViewModel.content.observe(this, Observer {
                 it?.let {
                     exoUtil.run {
-                        setUrl(it.request!!.files!!.progressive!![2].url!!)
+                        setUrl(it.request?.files?.progressive?.get(INDEX_URL)?.url)
                         onStart()
                     }
                 }
@@ -108,10 +108,14 @@ class VideoActivity : DaggerAppCompatActivity(), ExoUtil.PlayerStateListener {
     }
 
     /**
-     * Regains references
+     * Clears references
      */
     public override fun onStop() {
         super.onStop()
         exoUtil.onStop()
+    }
+
+    companion object {
+        private const val INDEX_URL = 2
     }
 }

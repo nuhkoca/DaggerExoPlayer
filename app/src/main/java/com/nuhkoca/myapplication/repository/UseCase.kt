@@ -12,7 +12,7 @@ import io.reactivex.schedulers.Schedulers
  * @param <P> represents params
  *
  * @author nuhkoca
-</P></M> */
+ */
 abstract class UseCase<M, P>(protected val playerRepository: PlayerRepository) {
 
     abstract fun buildUseCaseObservable(params: P?): Single<M>

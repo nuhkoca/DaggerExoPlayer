@@ -51,9 +51,4 @@ interface IPaginationCallback<Wrapper, Result> {
         params: PageKeyedDataSource.LoadParams<Int>,
         model: MutableList<Result>
     )
-
-    /**
-     * Clears references
-     */
-    fun clear()
 }

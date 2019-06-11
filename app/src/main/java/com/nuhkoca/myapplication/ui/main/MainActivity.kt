@@ -44,7 +44,8 @@ class MainActivity : DaggerAppCompatActivity(), VideoAdapter.VideoItemListener, 
         mMainViewModel = ViewModelProviders.of(this, viewModelFactory).get(MainViewModel::class.java)
         mActivityMainBinding.run {
             rvList.addItemDecoration(
-                    RecyclerViewItemDecoration(baseContext, 1, 0))
+                RecyclerViewItemDecoration(applicationContext, 1, 0)
+            )
             viewmodel = mMainViewModel
             lifecycleOwner = this@MainActivity
         }
@@ -56,8 +57,8 @@ class MainActivity : DaggerAppCompatActivity(), VideoAdapter.VideoItemListener, 
      */
     private fun initVideoList() {
         mMainViewModel.run {
-            networkState!!.observe(this@MainActivity, Observer { videoAdapter.setNetworkState(it) })
-            videoResult!!.observe(this@MainActivity, Observer { videoAdapter.submitList(it) })
+            networkState.observe(this@MainActivity, Observer { videoAdapter.setNetworkState(it) })
+            videoResult.observe(this@MainActivity, Observer { videoAdapter.submitList(it) })
             mActivityMainBinding.run { rvList.adapter = videoAdapter }
         }
     }
@@ -80,6 +81,6 @@ class MainActivity : DaggerAppCompatActivity(), VideoAdapter.VideoItemListener, 
      * Gets called when a click event has been triggered for any of network item
      */
     override fun onNetworkItemClicked() {
-        //No need now
+        //No need for now
     }
 }

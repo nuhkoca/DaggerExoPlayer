@@ -16,7 +16,7 @@ import java.net.HttpURLConnection.HTTP_UNAUTHORIZED
  *
  * @author nuhkoca
  */
-open class BaseRepository(
+abstract class BaseRepository(
     protected val iExoAPIService: IExoAPI,
     private val context: Context
 ) {

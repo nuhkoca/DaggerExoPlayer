@@ -1,5 +1,6 @@
 package com.nuhkoca.myapplication.ui.video
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.nuhkoca.myapplication.data.remote.player.PlayerResponse
@@ -10,25 +11,22 @@ import javax.inject.Inject
 /**
  * A [androidx.lifecycle.ViewModel] for media playing
  *
- * @author nuhkoca
- */
-class VideoViewModel
-/**
- * A default constructor that inject required dependencies
- *
  * @param compositeDisposable represents an instance of [CompositeDisposable]
  * @param playerUseCase       represents an instance of [PlayerUseCase]
+ *
+ * @author nuhkoca
  */
-@Inject
-internal constructor(private val compositeDisposable: CompositeDisposable,
-                     private val playerUseCase: PlayerUseCase) : ViewModel() {
-
+class VideoViewModel @Inject constructor(
+    private val compositeDisposable: CompositeDisposable,
+    private val playerUseCase: PlayerUseCase
+) : ViewModel() {
     /**
      * Returns the playable content
      *
      * @return the playable content
      */
-    internal val content = MutableLiveData<PlayerResponse>()
+    private val _content = MutableLiveData<PlayerResponse>()
+    val content: LiveData<PlayerResponse> get() = _content
 
     /**
      * Returns playable content
@@ -38,7 +36,7 @@ internal constructor(private val compositeDisposable: CompositeDisposable,
     internal fun getPlayableContent(videoId: String) {
         val url = playerUseCase.execute(object : DisposableSingleObserver<PlayerResponse>() {
             override fun onSuccess(playerResponse: PlayerResponse) {
-                content.value = playerResponse
+                _content.value = playerResponse
             }
 
             override fun onError(e: Throwable) {

@@ -5,20 +5,7 @@ import javax.inject.Inject
 /**
  * A factory pattern that initializes the [ExoUtil]
  *
+ * @param exoUtil represents an instance of [ExoUtil]
  * @author nuhkoca
  */
-class ExoUtilFactory
-/**
- * A default constructor that injects dependencies
- *
- * @param exoUtil represents an instance of [ExoUtil]
- */
-@Inject
-internal constructor(
-    /**
-     * Returns an instance of [ExoUtil]
-     *
-     * @return an instance of [ExoUtil]
-     */
-    val exoUtil: ExoUtil
-)
+class ExoUtilFactory @Inject constructor(val exoUtil: ExoUtil)
