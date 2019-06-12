@@ -1,7 +1,6 @@
 package com.nuhkoca.myapplication.util.exo
 
 import android.net.Uri
-
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.PlaybackPreparer
 import com.google.android.exoplayer2.Player
@@ -12,25 +11,19 @@ import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.exoplayer2.util.Util
 import com.nuhkoca.myapplication.helper.Constants
 import com.nuhkoca.myapplication.util.PreferenceUtil
-
 import javax.inject.Inject
 import javax.inject.Provider
 
 /**
  * A utility class to conduct Exo implementation
  *
+ * @param exoPlayer      represents an instance of [SimpleExoPlayer]
+ * @param factory        represents an instance of [ProgressiveMediaSource]
+ * @param preferenceUtil represents an instance of [PreferenceUtil]
+ *
  * @author nuhkoca
  */
-class ExoUtil
-/**
- * A default constructor that injects dependencies
- *
- * @param exoPlayer      represents an instance of [SimpleExoPlayer]
- * @param factory        represents an instance of [ProgressiveMediaSource.Factory]
- * @param preferenceUtil represents an instance of [PreferenceUtil]
- */
-@Inject
-internal constructor(
+class ExoUtil @Inject constructor(
     private val exoPlayer: Provider<SimpleExoPlayer>,
     private val factory: ProgressiveMediaSource.Factory,
     private val preferenceUtil: PreferenceUtil
@@ -41,16 +34,11 @@ internal constructor(
     private var mPlayerStateListener: PlayerStateListener? = null
     private var mPlayerView: PlayerView? = null
 
-    private var mShouldAutoPlay: Boolean = false
+    private var mShouldAutoPlay: Boolean = true
     private var mUrl: String? = null
 
-    init {
-
-        mShouldAutoPlay = true
-    }
-
     /**
-     * Helps build a [ExtractorMediaSource.Factory]
+     * Helps build a [ProgressiveMediaSource.Factory]
      *
      * @param uri represents a url to be played
      * @return an instance of [MediaSource]
@@ -77,7 +65,7 @@ internal constructor(
      *
      * @param url indicates the media url
      */
-    fun setUrl(url: String) {
+    fun setUrl(url: String?) {
         this.mUrl = url
     }
 
@@ -86,14 +74,18 @@ internal constructor(
      */
     private fun initializePlayer() {
         simpleExoPlayer = exoPlayer.get()
-        mPlayerView!!.setPlayer(simpleExoPlayer)
-        mPlayerView!!.setPlaybackPreparer(this)
-        simpleExoPlayer!!.addListener(this)
-        simpleExoPlayer!!.playWhenReady = mShouldAutoPlay
+        mPlayerView?.apply {
+            player = simpleExoPlayer
+            setPlaybackPreparer(this@ExoUtil)
+        }
+        simpleExoPlayer?.apply {
+            addListener(this@ExoUtil)
+            playWhenReady = mShouldAutoPlay
+        }
 
-        if (mUrl != null) {
-            simpleExoPlayer!!.prepare(buildMediaSource(Uri.parse(mUrl)))
-            simpleExoPlayer!!.seekTo(preferenceUtil.getLongData(Constants.CURRENT_POSITION_KEY, 0))
+        mUrl?.let { url ->
+            simpleExoPlayer?.prepare(buildMediaSource(Uri.parse(url)))
+            simpleExoPlayer?.seekTo(preferenceUtil.getLongData(Constants.CURRENT_POSITION_KEY, 0))
         }
     }
 
@@ -101,12 +93,12 @@ internal constructor(
      * Releases the [ExoUtil.exoPlayer]
      */
     private fun releasePlayer() {
-        if (simpleExoPlayer != null) {
-            simpleExoPlayer!!.stop()
-            simpleExoPlayer!!.release()
-            simpleExoPlayer!!.removeListener(this)
-            mShouldAutoPlay = simpleExoPlayer!!.playWhenReady
-            preferenceUtil.putLongData(Constants.CURRENT_POSITION_KEY, simpleExoPlayer!!.currentPosition)
+        simpleExoPlayer?.let { exoPlayer ->
+            exoPlayer.stop()
+            exoPlayer.release()
+            exoPlayer.removeListener(this)
+            mShouldAutoPlay = exoPlayer.playWhenReady
+            preferenceUtil.putLongData(Constants.CURRENT_POSITION_KEY, exoPlayer.currentPosition)
             simpleExoPlayer = null
         }
     }
@@ -124,7 +116,7 @@ internal constructor(
      * @param error represents an error
      */
     override fun onPlayerError(error: ExoPlaybackException?) {
-        mPlayerStateListener!!.onPlayerError()
+        mPlayerStateListener?.onPlayerError()
     }
 
     /**
@@ -134,7 +126,7 @@ internal constructor(
      * @param playbackState indicates the status of video
      */
     override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-        mPlayerStateListener!!.onPlayerStateChanged(playbackState)
+        mPlayerStateListener?.onPlayerStateChanged(playbackState)
     }
 
     /**
@@ -143,9 +135,7 @@ internal constructor(
     fun onStart() {
         if (Util.SDK_INT > 23) {
             initializePlayer()
-            if (mPlayerView != null) {
-                mPlayerView!!.onResume()
-            }
+            mPlayerView?.onResume()
         }
     }
 
@@ -155,9 +145,7 @@ internal constructor(
     fun onResume() {
         if (Util.SDK_INT <= 23 || mPlayerView == null) {
             initializePlayer()
-            if (mPlayerView != null) {
-                mPlayerView!!.onResume()
-            }
+            mPlayerView?.onResume()
         }
     }
 
@@ -166,9 +154,7 @@ internal constructor(
      */
     fun onPause() {
         if (Util.SDK_INT <= 23) {
-            if (mPlayerView != null) {
-                mPlayerView!!.onPause()
-            }
+            mPlayerView?.onPause()
             releasePlayer()
         }
     }
@@ -178,9 +164,7 @@ internal constructor(
      */
     fun onStop() {
         if (Util.SDK_INT > 23) {
-            if (mPlayerView != null) {
-                mPlayerView!!.onPause()
-            }
+            mPlayerView?.onPause()
             releasePlayer()
         }
     }

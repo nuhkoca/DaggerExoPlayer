@@ -11,16 +11,11 @@ import javax.inject.Named
 /**
  * A repository layer that handles playable content
  *
+ * @param iExoAPI represents an instance of [IExoAPI]
+ *
  * @author nuhkoca
  */
-class PlayerRepository
-/**
- * A default constructor that gets dependencies
- *
- * @param iExoAPI represents an instance of [IExoAPI]
- */
-@Inject
-internal constructor(@param:Named("playerService") private val iExoAPI: IExoAPI) {
+class PlayerRepository @Inject constructor(@Named("playerService") private val iExoAPI: IExoAPI) {
 
     /**
      * Returns video result

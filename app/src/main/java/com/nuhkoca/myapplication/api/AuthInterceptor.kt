@@ -14,12 +14,7 @@ import javax.inject.Singleton
  * @author nuhkoca
  */
 @Singleton
-class AuthInterceptor
-/**
- * A default constructor that gets dependencies
- */
-@Inject
-constructor() : Interceptor {
+class AuthInterceptor @Inject constructor() : Interceptor {
 
     /**
      * Adds specific headers to requests

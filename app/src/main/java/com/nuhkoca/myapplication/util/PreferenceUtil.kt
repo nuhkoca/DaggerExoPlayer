@@ -9,8 +9,7 @@ import javax.inject.Inject
  *
  * @author nuhkoca
  */
-class PreferenceUtil @Inject
-internal constructor(private val sharedPreferences: SharedPreferences) {
+class PreferenceUtil @Inject constructor(private val sharedPreferences: SharedPreferences) {
 
     /**
      * Helps save Int data

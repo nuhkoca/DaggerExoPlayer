@@ -180,7 +180,8 @@ class PageKeyedVideosDataSource @Inject internal constructor(
     /**
      * Clears references
      */
-    override fun clear() {
+    override fun invalidate() {
+        super.invalidate()
         compositeDisposable.clear()
     }
 }

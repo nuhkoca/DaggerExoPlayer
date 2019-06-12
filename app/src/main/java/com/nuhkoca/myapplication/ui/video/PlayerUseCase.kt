@@ -3,23 +3,18 @@ package com.nuhkoca.myapplication.ui.video
 import com.nuhkoca.myapplication.data.remote.player.PlayerResponse
 import com.nuhkoca.myapplication.repository.PlayerRepository
 import com.nuhkoca.myapplication.repository.UseCase
-
-import javax.inject.Inject
 import io.reactivex.Single
+import javax.inject.Inject
 
 /**
  * A [UseCase] pattern for playable content
  *
+ * @param playerRepository represents an instance of [PlayerRepository]
+ *
  * @author nuhkoca
  */
-class PlayerUseCase
-/**
- * A default constructor that inject required dependencies
- *
- * @param playerRepository represents an instance of [PlayerRepository]
- */
-@Inject
-internal constructor(playerRepository: PlayerRepository) : UseCase<PlayerResponse, String>(playerRepository) {
+class PlayerUseCase @Inject constructor(playerRepository: PlayerRepository) :
+    UseCase<PlayerResponse, String>(playerRepository) {
 
     /**
      * Build use case with the power of RxJava

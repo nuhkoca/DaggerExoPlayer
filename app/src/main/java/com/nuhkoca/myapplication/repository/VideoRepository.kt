@@ -14,17 +14,13 @@ import javax.inject.Named
 /**
  * A repository layer that handles video searching
  *
+ *  @param iExoAPI represents an instance of [IExoAPI]
+ * @param context represents an instance of [Context]
+ *
  * @author nuhkoca
  */
-class VideoRepository
-/**
- * A default constructor that gets dependencies
- *
- * @param iExoAPI represents an instance of [IExoAPI]
- * @param context represents an instance of [Context]
- */
-@Inject
-internal constructor(@Named("videoService") iExoAPI: IExoAPI, context: Context) : BaseRepository(iExoAPI, context) {
+class VideoRepository @Inject constructor(@Named("videoService") iExoAPI: IExoAPI, context: Context) :
+    BaseRepository(iExoAPI, context) {
 
     /**
      * Returns video result
