@@ -10,11 +10,6 @@ import java.util.Locale
  * @author nuhkoca
  */
 object Constants {
-
-    init {
-        throw AssertionError()
-    }
-
     const val EXO_PLAYER_USER_AGENT = BuildConfig.APPLICATION_ID
     const val EXO_PLAYER_VIDEO_CACHE_DURATION = 10 * 1024 * 1024
     const val DEFAULT_TIMEOUT = 60

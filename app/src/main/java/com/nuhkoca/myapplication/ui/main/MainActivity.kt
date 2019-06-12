@@ -42,7 +42,7 @@ class MainActivity : DaggerAppCompatActivity(), VideoAdapter.VideoItemListener, 
         super.onCreate(savedInstanceState)
         mActivityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         mMainViewModel = ViewModelProviders.of(this, viewModelFactory).get(MainViewModel::class.java)
-        mActivityMainBinding.run {
+        mActivityMainBinding.apply {
             rvList.addItemDecoration(
                 RecyclerViewItemDecoration(applicationContext, 1, 0)
             )
@@ -56,10 +56,10 @@ class MainActivity : DaggerAppCompatActivity(), VideoAdapter.VideoItemListener, 
      * Initializes the necessary component for listing
      */
     private fun initVideoList() {
-        mMainViewModel.run {
-            networkState.observe(this@MainActivity, Observer { videoAdapter.setNetworkState(it) })
-            videoResult.observe(this@MainActivity, Observer { videoAdapter.submitList(it) })
-            mActivityMainBinding.run { rvList.adapter = videoAdapter }
+        mMainViewModel.apply {
+            networkState.observe(this@MainActivity, Observer(videoAdapter::setNetworkState))
+            videoResult.observe(this@MainActivity, Observer(videoAdapter::submitList))
+            mActivityMainBinding.rvList.adapter = videoAdapter
         }
     }
 
@@ -70,11 +70,12 @@ class MainActivity : DaggerAppCompatActivity(), VideoAdapter.VideoItemListener, 
      */
     override fun onVideoItemClicked(videoId: String?) {
         preferenceUtil.putLongData(Constants.CURRENT_POSITION_KEY, 0)
-        val videoIntent = Intent(this, VideoActivity::class.java)
-        val extras = Bundle()
-        extras.putString(Constants.VIDEO_KEY, videoId)
-        videoIntent.putExtras(extras)
-        startActivity(videoIntent)
+        Intent(this, VideoActivity::class.java).apply {
+            val extras = Bundle()
+            extras.putString(Constants.VIDEO_KEY, videoId)
+            putExtras(extras)
+            startActivity(this)
+        }
     }
 
     /**
