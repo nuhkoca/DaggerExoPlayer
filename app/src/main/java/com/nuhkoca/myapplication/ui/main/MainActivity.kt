@@ -11,8 +11,8 @@ import com.nuhkoca.myapplication.ui.main.adapter.VideoAdapter
 import com.nuhkoca.myapplication.ui.video.VideoActivity
 import com.nuhkoca.myapplication.util.PreferenceUtil
 import com.nuhkoca.myapplication.util.ext.get
+import com.nuhkoca.myapplication.util.ext.launchActivityWithExtra
 import com.nuhkoca.myapplication.util.ext.observeWith
-import com.nuhkoca.myapplication.util.ext.startActivityWithBundle
 import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
 
@@ -68,7 +68,7 @@ class MainActivity : DaggerAppCompatActivity() {
     private fun observeVideoClicks() {
         videoAdapter.videoItemClick.observeWith(this) {
             preferenceUtil.putLongData(Constants.CURRENT_POSITION_KEY, 0)
-            startActivityWithBundle(VideoActivity::class.java) { putString(Constants.VIDEO_KEY, it) }
+            launchActivityWithExtra<VideoActivity> { putString(Constants.VIDEO_KEY, it) }
         }
     }
 }

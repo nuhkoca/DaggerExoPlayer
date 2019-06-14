@@ -11,12 +11,15 @@ fun Activity.lifecycleAwareHandler(lifecycleOwner: LifecycleOwner, exoUtil: ExoU
     lifecycleOwner.lifecycle.addObserver(ExoUtilHandler(exoUtil))
 }
 
-inline fun <reified T : Any> Activity.startActivityWithBundle(
-    targetClass: Class<T>,
+inline fun <reified T : Any> Activity.launchActivityWithExtra(
+    noinline init: Intent.() -> Unit = {},
     crossinline extras: Bundle.() -> Unit = {}
 ) {
-    Intent(this, targetClass).also { intent ->
-        intent.putExtras(Bundle().apply(extras))
-        startActivity(intent)
-    }
+    val intent = newIntent<T>()
+    intent.init()
+    intent.putExtras(Bundle().apply(extras))
+    startActivity(intent)
 }
+
+inline fun <reified T : Any> Activity.newIntent(): Intent =
+    Intent(this, T::class.java)
