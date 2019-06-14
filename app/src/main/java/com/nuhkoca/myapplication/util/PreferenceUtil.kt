@@ -3,12 +3,14 @@ package com.nuhkoca.myapplication.util
 import android.content.SharedPreferences
 
 import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * A class that handles data persistence during the app runtime
  *
  * @author nuhkoca
  */
+@Singleton
 class PreferenceUtil @Inject constructor(private val sharedPreferences: SharedPreferences) {
 
     /**
@@ -35,10 +37,10 @@ class PreferenceUtil @Inject constructor(private val sharedPreferences: SharedPr
      * Helps save long data
      *
      * @param key indicator
-     * @param val value
+     * @param defVal value
      */
-    fun putLongData(key: String, `val`: Long) {
-        sharedPreferences.edit().putLong(key, `val`).apply()
+    fun putLongData(key: String, defVal: Long) {
+        sharedPreferences.edit().putLong(key, defVal).apply()
     }
 
     /**
@@ -55,10 +57,10 @@ class PreferenceUtil @Inject constructor(private val sharedPreferences: SharedPr
      * Helps save String data
      *
      * @param key indicator
-     * @param val value
+     * @param defVal value
      */
-    fun putStringData(key: String, `val`: String?) {
-        sharedPreferences.edit().putString(key, `val`).apply()
+    fun putStringData(key: String, defVal: String?) {
+        sharedPreferences.edit().putString(key, defVal).apply()
     }
 
     /**
@@ -75,10 +77,10 @@ class PreferenceUtil @Inject constructor(private val sharedPreferences: SharedPr
      * Helps save Boolean data
      *
      * @param key indicator
-     * @param val value
+     * @param defVal value
      */
-    fun putBooleanData(key: String, `val`: Boolean) {
-        sharedPreferences.edit().putBoolean(key, `val`).apply()
+    fun putBooleanData(key: String, defVal: Boolean) {
+        sharedPreferences.edit().putBoolean(key, defVal).apply()
     }
 
     /**

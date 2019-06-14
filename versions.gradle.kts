@@ -1,3 +1,5 @@
-extra["compileSdk"] = 28
-extra["minSdk"] = 21
-extra["targetSdk"] = 28
+extra.apply {
+    this["compileSdk"] = 28
+    this["minSdk"] = 21
+    this["targetSdk"] = 28
+}

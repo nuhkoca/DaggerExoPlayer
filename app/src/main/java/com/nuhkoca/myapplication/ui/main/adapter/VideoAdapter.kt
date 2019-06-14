@@ -3,34 +3,30 @@ package com.nuhkoca.myapplication.ui.main.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.nuhkoca.myapplication.BR
 import com.nuhkoca.myapplication.R
 import com.nuhkoca.myapplication.api.NetworkState
+import com.nuhkoca.myapplication.api.NetworkState.Status.FAILED
+import com.nuhkoca.myapplication.api.NetworkState.Status.RUNNING
 import com.nuhkoca.myapplication.base.BaseViewHolder
 import com.nuhkoca.myapplication.data.remote.video.VideoResponse
 import com.nuhkoca.myapplication.databinding.NetworkStateItemBinding
 import com.nuhkoca.myapplication.databinding.VideoItemLayoutBinding
-import com.nuhkoca.myapplication.ui.main.adapter.VideoAdapter.NetworkItemListener
-import com.nuhkoca.myapplication.ui.main.adapter.VideoAdapter.VideoItemListener
+import com.nuhkoca.myapplication.util.ext.SingleLiveEvent
 import org.jetbrains.annotations.Contract
+import javax.inject.Inject
 
 /**
  * A [RecyclerView.Adapter] that holds video results
  *
  * @author nuhkoca
  */
-class VideoAdapter
-/**
- * A default constructor that initializes callbacks
- *
- * @param videoItemListener   represents an instance of [VideoItemListener]
- * @param networkItemListener epresents an instance of [NetworkItemListener]
- */
-(private val mVideoItemListener: VideoItemListener, private val mNetworkItemListener: NetworkItemListener) : PagedListAdapter<VideoResponse, RecyclerView.ViewHolder>(VideoResponse.DIFF_CALLBACK) {
+class VideoAdapter @Inject constructor() :
+    PagedListAdapter<VideoResponse, RecyclerView.ViewHolder>(VideoResponse.DIFF_CALLBACK) {
 
+    val videoItemClick = SingleLiveEvent<String>()
     private var mNetworkState: NetworkState? = null
 
     /**
@@ -46,12 +42,9 @@ class VideoAdapter
 
         return if (viewType == R.layout.video_item_layout) {
             val videoItemLayoutBinding = VideoItemLayoutBinding.inflate(inflater, parent, false)
-
             VideoViewHolder(videoItemLayoutBinding.root)
         } else {
-            val networkStateItemBinding = DataBindingUtil.inflate<NetworkStateItemBinding>(inflater,
-                    R.layout.network_state_item, parent, false)
-
+            val networkStateItemBinding = NetworkStateItemBinding.inflate(inflater, parent, false)
             NetworkViewHolder(networkStateItemBinding.root)
         }
     }
@@ -63,19 +56,17 @@ class VideoAdapter
      * @param position represents position in model
      */
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when (getItemViewType(position)) {
-            R.layout.video_item_layout -> {
+        when (holder) {
+            is VideoViewHolder -> {
                 val videoResponse = getItem(position)
 
-                if (videoResponse != null) {
-                    (holder as VideoViewHolder).setListener(mVideoItemListener)
+                videoResponse?.let {
                     holder.bindTo(videoResponse)
                 }
             }
 
-            R.layout.network_state_item -> {
-                (holder as NetworkViewHolder).setListener(mNetworkItemListener)
-                holder.bindTo(mNetworkState!!)
+            is NetworkViewHolder -> {
+                mNetworkState?.let(holder::bindTo)
             }
         }
     }
@@ -129,16 +120,8 @@ class VideoAdapter
     /**
      * A [RecyclerView.ViewHolder] that holds video items
      */
-    internal inner class VideoViewHolder(itemView: View) : BaseViewHolder<VideoItemLayoutBinding, VideoResponse, VideoItemListener>(itemView) {
-
-        /**
-         * Sets listener for each video item
-         *
-         * @param listener represents any interface
-         */
-        override fun setListener(listener: VideoItemListener) {
-            this.listener = listener
-        }
+    internal inner class VideoViewHolder(itemView: View) :
+        BaseViewHolder<VideoItemLayoutBinding, VideoResponse>(itemView) {
 
         /**
          * Binds a model into layout items
@@ -146,10 +129,14 @@ class VideoAdapter
          * @param item a model
          */
         override fun bindTo(item: VideoResponse) {
-            dataBinding!!.setVariable(BR.videoResponse, item)
-            dataBinding!!.setVariable(BR.size, item.pictures.sizes[5]) //large size
-            dataBinding!!.setVariable(BR.videoId, getVideoId(item.uri))
-            dataBinding!!.setVariable(BR.videoItemListener, listener)
+            dataBinding?.apply {
+                setVariable(BR.videoResponse, item)
+                setVariable(BR.size, item.pictures.sizes[INDEX_LARGE_IMAGE])
+
+                videoHolder.setOnClickListener { videoItemClick.value = getVideoId(item.uri) }
+
+                executePendingBindings()
+            }
         }
     }
 
@@ -167,16 +154,8 @@ class VideoAdapter
     /**
      * A [RecyclerView.ViewHolder] that manages network processes
      */
-    internal inner class NetworkViewHolder(itemView: View) : BaseViewHolder<NetworkStateItemBinding, NetworkState, NetworkItemListener>(itemView) {
-
-        /**
-         * Sets listener for each artist item
-         *
-         * @param listener represents any interface
-         */
-        override fun setListener(listener: NetworkItemListener) {
-            this.listener = listener
-        }
+    internal inner class NetworkViewHolder(itemView: View) :
+        BaseViewHolder<NetworkStateItemBinding, NetworkState>(itemView) {
 
         /**
          * Binds a model into layout items
@@ -184,53 +163,35 @@ class VideoAdapter
          * @param item a network state
          */
         override fun bindTo(item: NetworkState) {
-            dataBinding!!.setVariable(BR.networkItemListener, listener)
+            dataBinding?.apply {
+                when {
+                    item.status === RUNNING -> {
+                        clNetwork.visibility = View.VISIBLE
+                        pbNetwork.visibility = View.VISIBLE
+                        btnNetworkStateErrButton.visibility = View.GONE
+                        tvNetworkStateErrText.visibility = View.GONE
+                    }
+                    item.status === FAILED -> {
+                        clNetwork.visibility = View.VISIBLE
+                        pbNetwork.visibility = View.GONE
+                        btnNetworkStateErrButton.visibility = View.VISIBLE
+                        tvNetworkStateErrText.visibility = View.VISIBLE
+                        tvNetworkStateErrText.text = item.message
+                    }
+                    else -> {
+                        clNetwork.visibility = View.GONE
+                        pbNetwork.visibility = View.GONE
+                        btnNetworkStateErrButton.visibility = View.GONE
+                        tvNetworkStateErrText.visibility = View.GONE
+                    }
+                }
 
-            if (item.status === NetworkState.Status.RUNNING) {
-                dataBinding!!.clNetwork.visibility = View.VISIBLE
-                dataBinding!!.pbNetwork.visibility = View.VISIBLE
-                dataBinding!!.btnNetworkStateErrButton.visibility = View.GONE
-                dataBinding!!.tvNetworkStateErrText.visibility = View.GONE
-            } else if (item.status === NetworkState.Status.FAILED) {
-                dataBinding!!.clNetwork.visibility = View.VISIBLE
-                dataBinding!!.pbNetwork.visibility = View.GONE
-                dataBinding!!.btnNetworkStateErrButton.visibility = View.VISIBLE
-                dataBinding!!.tvNetworkStateErrText.visibility = View.VISIBLE
-                dataBinding!!.tvNetworkStateErrText.text = item.message
-            } else {
-                dataBinding!!.clNetwork.visibility = View.GONE
-                dataBinding!!.pbNetwork.visibility = View.GONE
-                dataBinding!!.btnNetworkStateErrButton.visibility = View.GONE
-                dataBinding!!.tvNetworkStateErrText.visibility = View.GONE
+                executePendingBindings()
             }
-
-            dataBinding!!.executePendingBindings()
         }
     }
 
-    /**
-     * An interface that sniffs click event for video item
-     */
-    interface VideoItemListener {
-
-        /**
-         * Gets called when a click event has been triggered for any of video item
-         *
-         * @param videoId indicates the video id of the selected item
-         */
-        fun onVideoItemClicked(videoId: String?)
-    }
-
-    /**
-     * An interface that sniffs click event for network item
-     *
-     * @author nuhkoca
-     */
-    interface NetworkItemListener {
-
-        /**
-         * Gets called when a click event has been triggered for any of network item
-         */
-        fun onNetworkItemClicked()
+    companion object {
+        private const val INDEX_LARGE_IMAGE = 5
     }
 }

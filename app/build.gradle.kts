@@ -21,7 +21,7 @@ android {
         minSdkVersion(extra["minSdk"] as Int)
         targetSdkVersion(extra["targetSdk"] as Int)
         versionCode = 1
-        versionName = getVersionName()
+        versionName = getSemanticVersionName()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -30,6 +30,10 @@ android {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
+    }
+
+    sourceSets {
+        getByName("main").java.srcDirs("src/kotlin/main")
     }
 
     compileOptions {
@@ -101,7 +105,7 @@ dependencies {
     }
 }
 
-fun getVersionName(): String {
+fun getSemanticVersionName(): String {
     val majorCode = 1
     val minorCode = 0
     val patchCode = 0

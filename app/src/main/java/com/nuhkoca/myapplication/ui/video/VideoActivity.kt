@@ -1,23 +1,25 @@
 package com.nuhkoca.myapplication.ui.video
 
 import android.os.Bundle
-import android.view.View
-
-import com.google.android.exoplayer2.Player
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
+import com.google.android.exoplayer2.Player.STATE_BUFFERING
+import com.google.android.exoplayer2.Player.STATE_IDLE
+import com.google.android.exoplayer2.Player.STATE_READY
 import com.nuhkoca.myapplication.R
 import com.nuhkoca.myapplication.databinding.ActivityVideoBinding
 import com.nuhkoca.myapplication.helper.Constants
 import com.nuhkoca.myapplication.util.exo.ExoUtil
 import com.nuhkoca.myapplication.util.exo.ExoUtilFactory
-
-import javax.inject.Inject
-
-import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
+import com.nuhkoca.myapplication.util.ext.get
+import com.nuhkoca.myapplication.util.ext.hide
+import com.nuhkoca.myapplication.util.ext.isVisible
+import com.nuhkoca.myapplication.util.ext.lifecycleAwareHandler
+import com.nuhkoca.myapplication.util.ext.observeWith
+import com.nuhkoca.myapplication.util.ext.unsafeLazy
 import dagger.Lazy
 import dagger.android.support.DaggerAppCompatActivity
+import javax.inject.Inject
 
 /**
  * A [DaggerAppCompatActivity] that handles media playing
@@ -26,11 +28,17 @@ import dagger.android.support.DaggerAppCompatActivity
  */
 class VideoActivity : DaggerAppCompatActivity(), ExoUtil.PlayerStateListener {
 
+    @Inject
+    internal lateinit var viewModelFactory: ViewModelProvider.Factory
+    private lateinit var videoViewModel: VideoViewModel
+
+    @Inject
+    internal lateinit var exoUtilFactory: Lazy<ExoUtilFactory>
+
     private lateinit var mActivityVideoBinding: ActivityVideoBinding
     private lateinit var exoUtil: ExoUtil
 
-    @Inject internal lateinit var viewModelFactory: ViewModelProvider.Factory
-    @Inject internal lateinit var exoUtilFactory: Lazy<ExoUtilFactory>
+    private val extras by unsafeLazy { intent.extras }
 
     /**
      * Initializes the activity
@@ -41,33 +49,28 @@ class VideoActivity : DaggerAppCompatActivity(), ExoUtil.PlayerStateListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mActivityVideoBinding = DataBindingUtil.setContentView(this, R.layout.activity_video)
-        val videoViewModel = ViewModelProviders.of(this, viewModelFactory).get(VideoViewModel::class.java)
+        videoViewModel = viewModelFactory.get(this)
 
         exoUtil = exoUtilFactory.get().exoUtil
         exoUtil.setPlayerView(mActivityVideoBinding.pvVideo)
         exoUtil.setListener(this)
 
-        val extras = intent.extras ?: return
-        val videoUrl = extras.getString(Constants.VIDEO_KEY)
-
-        if (videoUrl != null) {
-            videoViewModel.getPlayableContent(videoUrl)
-            videoViewModel.content.observe(this, Observer {
-                it?.let {
-                    exoUtil.run {
-                        setUrl(it.request?.files?.progressive?.get(INDEX_URL)?.url)
-                        onStart()
-                    }
-                }
-            })
+        val videoUrl = extras?.getString(Constants.VIDEO_KEY)
+        videoUrl?.let {
+            videoViewModel.getPlayableContent(it)
+            videoViewModel.content.observeWith(this) { response ->
+                exoUtil.setUrl(response.request?.files?.progressive?.get(INDEX_URL)?.url)
+            }
         }
+
+        lifecycleAwareHandler(this, exoUtil)
     }
 
     /**
      * Gets called when there is an error to play video
      */
     override fun onPlayerError() {
-        mActivityVideoBinding.pbError.visibility = View.GONE
+        mActivityVideoBinding.pbError.hide()
     }
 
     /**
@@ -76,43 +79,8 @@ class VideoActivity : DaggerAppCompatActivity(), ExoUtil.PlayerStateListener {
      * @param playbackState indicates the status of video
      */
     override fun onPlayerStateChanged(playbackState: Int) {
-        when (playbackState) {
-            Player.STATE_BUFFERING -> mActivityVideoBinding.pbError.visibility = View.VISIBLE
-            Player.STATE_READY -> mActivityVideoBinding.pbError.visibility = View.GONE
-            Player.STATE_IDLE -> mActivityVideoBinding.pbError.visibility = View.GONE
-        }
-    }
-
-    /**
-     * Clears references
-     */
-    public override fun onStart() {
-        super.onStart()
-        exoUtil.onStart()
-    }
-
-    /**
-     * Regains references
-     */
-    public override fun onResume() {
-        super.onResume()
-        exoUtil.onResume()
-    }
-
-    /**
-     * Clears references
-     */
-    public override fun onPause() {
-        super.onPause()
-        exoUtil.onPause()
-    }
-
-    /**
-     * Clears references
-     */
-    public override fun onStop() {
-        super.onStop()
-        exoUtil.onStop()
+        mActivityVideoBinding.pbError.isVisible =
+            playbackState == STATE_BUFFERING || playbackState != STATE_READY || playbackState != STATE_IDLE
     }
 
     companion object {

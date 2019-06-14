@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
  *
  * @author nuhkoca
  */
-class RecyclerViewItemDecoration(private val context: Context, orientation: Int, private val margin: Int) :
+class RecyclerViewItemDecoration(private val context: Context, orientation: Int = 1, private val margin: Int = 0) :
     RecyclerView.ItemDecoration() {
 
     private val mDivider: Drawable?
@@ -117,10 +117,9 @@ class RecyclerViewItemDecoration(private val context: Context, orientation: Int,
     }
 
     companion object {
-
         private val ATTRS = intArrayOf(android.R.attr.listDivider)
 
-        private val HORIZONTAL_LIST = LinearLayoutManager.HORIZONTAL
-        private val VERTICAL_LIST = LinearLayoutManager.VERTICAL
+        private const val HORIZONTAL_LIST = LinearLayoutManager.HORIZONTAL
+        private const val VERTICAL_LIST = LinearLayoutManager.VERTICAL
     }
 }

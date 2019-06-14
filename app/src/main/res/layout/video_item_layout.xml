@@ -15,16 +15,6 @@
         type="com.nuhkoca.myapplication.data.remote.video.Size"
         />
 
-    <variable
-        name="videoId"
-        type="String"
-        />
-
-    <variable
-        name="videoItemListener"
-        type="com.nuhkoca.myapplication.ui.main.adapter.VideoAdapter.VideoItemListener"
-        />
-
     <import type="com.nuhkoca.myapplication.R"/>
   </data>
 
@@ -34,12 +24,12 @@
       >
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/videoHolder"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackground"
         android:clickable="true"
         android:focusable="true"
-        android:onClick="@{() -> videoItemListener.onVideoItemClicked(videoId)}"
         android:padding="16dp"
         >
 

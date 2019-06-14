@@ -13,21 +13,13 @@ import org.jetbrains.annotations.Contract
  *
  * @author nuhkoca
  */
-abstract class BaseViewHolder<DB : ViewDataBinding, T, L>(itemView: View) : RecyclerView.ViewHolder(itemView) {
+abstract class BaseViewHolder<DB : ViewDataBinding, T>(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-    internal var listener: L? = null
     internal var dataBinding: DB? = null
 
     init {
         dataBinding = DataBindingUtil.getBinding(itemView)
     }
-
-    /**
-     * Sets corresponding listener to [BaseViewHolder.listener]
-     *
-     * @param listener represents any interface
-     */
-    abstract fun setListener(listener: L)
 
     /**
      * A default method that binds model into layout
