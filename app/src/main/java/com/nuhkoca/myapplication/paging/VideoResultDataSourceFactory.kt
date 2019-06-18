@@ -10,8 +10,9 @@ import javax.inject.Inject
  *
  * @author nuhkoca
  */
-class VideoResultDataSourceFactory @Inject internal constructor(val pageKeyedVideosDataSource: PageKeyedVideosDataSource) :
-    DataSource.Factory<Int, VideoResponse>() {
+class VideoResultDataSourceFactory @Inject constructor(
+    private val pageKeyedVideosDataSource: PageKeyedVideosDataSource
+) : DataSource.Factory<Int, VideoResponse>() {
 
     /**
      * Returns [VideoResultDataSourceFactory.mPageKeyedVideosDataSourceMutableLiveData]

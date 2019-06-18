@@ -11,30 +11,24 @@ import javax.inject.Inject
 /**
  * A class that makes I/O, background or UI based processes.
  *
+ * @param diskIO    represents background thread
+ * @param networkIO represents network threads
+ *
  * @author nuhkoca
  */
-class AppExecutors
-/**
- * Default constructor
- *
- * @param diskIO    represents background threads
- * @param networkIO represents network threads
- */
-private constructor(private val diskIO: Executor, private val networkIO: Executor) {
+class AppExecutors @Inject constructor() {
     private val mainIO: Executor
-
-    @Inject
-    internal constructor() : this(
-        Executors.newSingleThreadExecutor(),
-        Executors.newFixedThreadPool(Constants.EXECUTOR_THREAD_POOL_OFFSET)
-    )
+    private val diskIO: Executor
+    private val networkIO: Executor
 
     init {
         this.mainIO = MainThreadExecutor()
+        this.diskIO = Executors.newSingleThreadExecutor()
+        this.networkIO = Executors.newFixedThreadPool(Constants.EXECUTOR_THREAD_POOL_OFFSET)
     }
 
     /**
-     * A class for [.mainIO]
+     * A class for [mainIO]
      */
     internal class MainThreadExecutor : Executor {
         private val mainThreadHandler = Handler(Looper.getMainLooper())

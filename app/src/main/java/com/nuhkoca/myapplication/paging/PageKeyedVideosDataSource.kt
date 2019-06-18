@@ -19,7 +19,8 @@ import javax.inject.Inject
  */
 class PageKeyedVideosDataSource @Inject internal constructor(
     private val videoRepository: VideoRepository,
-    private val context: Context, private val compositeDisposable: CompositeDisposable
+    private val context: Context,
+    private val compositeDisposable: CompositeDisposable
 ) : PageKeyedDataSource<Int, VideoResponse>(), IPaginationCallback<VideoWrapper, VideoResponse> {
 
     /**

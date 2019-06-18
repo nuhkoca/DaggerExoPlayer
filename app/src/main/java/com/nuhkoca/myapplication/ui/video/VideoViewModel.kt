@@ -33,7 +33,7 @@ class VideoViewModel @Inject constructor(
      *
      * @param videoId indicates the video id
      */
-    internal fun getPlayableContent(videoId: String) {
+    fun getPlayableContent(videoId: String) {
         val url = playerUseCase.execute(object : DisposableSingleObserver<PlayerResponse>() {
             override fun onSuccess(playerResponse: PlayerResponse) {
                 _content.value = playerResponse

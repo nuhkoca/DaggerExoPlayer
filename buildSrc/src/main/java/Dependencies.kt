@@ -17,6 +17,16 @@ object Versions {
     const val okhttp = "3.14.2"
     const val glide = "4.9.0"
     const val kotlin_version = "1.3.21"
+
+    const val test_core = "1.0.0"
+    const val runner = "1.1.0"
+    const val rules = "1.1.0"
+    const val junit = "1.0.0"
+    const val truth_ext = "1.0.0"
+    const val truth = "0.42"
+    const val espresso_core = "3.1.0"
+    const val mockito = "1.5.0"
+    const val arch_core = "1.0.0"
 }
 
 object Libs {
@@ -43,4 +53,25 @@ object Libs {
     const val glide_compiler = "com.github.bumptech.glide:compiler:${Versions.glide}"
     const val glide_okhttp = "com.github.bumptech.glide:okhttp3-integration:${Versions.glide}"
     const val kotlin = "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${Versions.kotlin_version}"
+}
+
+object TestLibs {
+    // Core library
+    const val test_core = "androidx.test:core:${Versions.test_core}"
+
+    // AndroidJUnitRunner and JUnit Rules
+    const val runner = "androidx.test:runner:${Versions.runner}"
+    const val rules = "androidx.test:rules:${Versions.rules}"
+
+    // Assertions
+    const val junit = "androidx.test.ext:junit:${Versions.junit}"
+    const val truth_ext = "androidx.test.ext:truth:${Versions.truth_ext}"
+    const val truth = "com.google.truth:truth:${Versions.truth}"
+
+    // Espresso dependencies
+    const val espresso_core = "androidx.test.espresso:espresso-core:${Versions.espresso_core}"
+
+    const val mockito = "com.nhaarman:mockito-kotlin-kt1.1:${Versions.mockito}"
+
+    const val arch_core = "android.arch.core:core-testing:${Versions.arch_core}"
 }

@@ -36,6 +36,10 @@ android {
         getByName("main").java.srcDirs("src/kotlin/main")
     }
 
+    testOptions {
+        unitTests.isReturnDefaultValues = true
+    }
+
     compileOptions {
         targetCompatibility = javaVersion
         sourceCompatibility = javaVersion
@@ -103,6 +107,16 @@ dependencies {
     implementation(Libs.glide_okhttp) {
         exclude(mapOf("group" to "glide-parent"))
     }
+
+    testImplementation(TestLibs.test_core)
+    testImplementation(TestLibs.runner)
+    testImplementation(TestLibs.rules)
+    testImplementation(TestLibs.junit)
+    testImplementation(TestLibs.truth_ext)
+    testImplementation(TestLibs.truth)
+    testImplementation(TestLibs.espresso_core)
+    testImplementation(TestLibs.mockito)
+    testImplementation(TestLibs.arch_core)
 }
 
 fun getSemanticVersionName(): String {
