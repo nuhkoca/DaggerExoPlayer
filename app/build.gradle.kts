@@ -117,6 +117,11 @@ dependencies {
     testImplementation(TestLibs.espresso_core)
     testImplementation(TestLibs.mockito)
     testImplementation(TestLibs.arch_core)
+
+    androidTestImplementation(TestLibs.rules)
+    androidTestImplementation(TestLibs.junit)
+    androidTestImplementation(TestLibs.truth)
+    androidTestImplementation(TestLibs.espresso_core)
 }
 
 fun getSemanticVersionName(): String {

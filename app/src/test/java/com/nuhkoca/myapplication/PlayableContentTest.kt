@@ -2,6 +2,7 @@ package com.nuhkoca.myapplication
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
+import com.google.common.truth.Truth
 import com.nuhkoca.myapplication.api.IExoAPI
 import com.nuhkoca.myapplication.data.remote.player.PlayerResponse
 import com.nuhkoca.myapplication.repository.PlayerRepository
@@ -10,12 +11,10 @@ import com.nuhkoca.myapplication.ui.video.VideoViewModel
 import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
 import org.junit.After
-import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.ArgumentMatchers
-import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.Mockito.mock
 import org.mockito.MockitoAnnotations
@@ -27,8 +26,7 @@ class PlayableContentTest {
 
     private val compositeDisposable = CompositeDisposable()
 
-    @Mock
-    lateinit var iExoAPI: IExoAPI
+    private val iExoAPI = mock(IExoAPI::class.java)
 
     private val observer = mock(Observer::class.java) as Observer<PlayerResponse>
 
@@ -46,7 +44,7 @@ class PlayableContentTest {
 
     @Test
     fun `playable_content_should_be_fetched_successfully`() {
-        Mockito.`when`(iExoAPI.getPlayableContent(ArgumentMatchers.anyString())).thenAnswer {
+        Mockito.`when`(iExoAPI.getPlayableContent(ID_VIDEO)).thenAnswer {
             return@thenAnswer Single.just(ArgumentMatchers.anyList<PlayerResponse>())
         }
 
@@ -54,7 +52,7 @@ class PlayableContentTest {
 
         videoViewModel.getPlayableContent(ID_VIDEO)
 
-        assertNotNull(videoViewModel.content)
+        Truth.assertThat(videoViewModel.content).isNotNull()
     }
 
     @After
