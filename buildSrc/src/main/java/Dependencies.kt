@@ -7,7 +7,7 @@ object Versions {
     const val material = "1.1.0-alpha07"
     const val constraint_layout = "2.0.0-beta1"
     const val exo_player = "2.10.1"
-    const val dagger = "2.23.1"
+    const val dagger = "2.46"
     const val paging = "2.1.0"
     const val livedata = "2.2.0-alpha01"
     const val rxjava = "2.2.9"
