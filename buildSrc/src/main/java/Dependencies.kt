@@ -26,7 +26,7 @@ object Versions {
     const val truth = "0.42"
     const val espresso_core = "3.1.0"
     const val mockito = "1.5.0"
-    const val arch_core = "1.0.0"
+    const val arch_core = "1.1.1"
 }
 
 object Libs {
