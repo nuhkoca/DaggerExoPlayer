@@ -9,7 +9,7 @@ object Versions {
     const val exo_player = "2.10.1"
     const val dagger = "2.46"
     const val paging = "2.1.0"
-    const val livedata = "2.2.0-alpha01"
+    const val livedata = "2.2.0"
     const val rxjava = "2.2.21"
     const val rxandroid = "2.1.1"
     const val jetbrains = "17.0.0"
