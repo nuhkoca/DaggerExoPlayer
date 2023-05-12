@@ -19,7 +19,7 @@ object Versions {
     const val kotlin_version = "1.3.21"
 
     const val test_core = "1.5.0"
-    const val runner = "1.1.0"
+    const val runner = "1.5.2"
     const val rules = "1.5.0"
     const val junit = "1.1.5"
     const val truth_ext = "1.5.0"
