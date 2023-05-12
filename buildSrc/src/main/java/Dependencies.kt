@@ -6,7 +6,7 @@ object Versions {
     const val x = "1.6.1"
     const val material = "1.9.0"
     const val constraint_layout = "2.1.4"
-    const val exo_player = "2.10.1"
+    const val exo_player = "2.18.6"
     const val dagger = "2.46"
     const val paging = "2.1.2"
     const val livedata = "2.2.0"
