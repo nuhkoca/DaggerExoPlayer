@@ -12,7 +12,7 @@ object Versions {
     const val livedata = "2.2.0"
     const val rxjava = "2.2.21"
     const val rxandroid = "2.1.1"
-    const val jetbrains = "17.0.0"
+    const val jetbrains = "24.0.1"
     const val retrofit = "2.9.0"
     const val okhttp = "3.14.9"
     const val glide = "4.15.1"
