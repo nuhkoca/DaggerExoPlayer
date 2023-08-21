@@ -15,7 +15,7 @@ object Versions {
     const val jetbrains = "24.0.1"
     const val retrofit = "2.9.0"
     const val okhttp = "4.11.0"
-    const val glide = "4.15.1"
+    const val glide = "4.16.0"
     const val kotlin_version = "1.9.0"
 
     const val test_core = "1.5.0"
