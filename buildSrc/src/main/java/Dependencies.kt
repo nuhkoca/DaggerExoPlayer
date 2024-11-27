@@ -1,5 +1,5 @@
 object Versions {
-    const val kotlin_gradle_version = "2.0.21"
+    const val kotlin_gradle_version = "2.1.0"
     const val gradle_version = "8.7.1"
     const val dokka_version = "0.9.18"
 
@@ -16,7 +16,7 @@ object Versions {
     const val retrofit = "2.11.0"
     const val okhttp = "4.12.0"
     const val glide = "4.16.0"
-    const val kotlin_version = "2.0.21"
+    const val kotlin_version = "2.1.0"
 
     const val test_core = "1.6.1"
     const val runner = "1.6.2"
