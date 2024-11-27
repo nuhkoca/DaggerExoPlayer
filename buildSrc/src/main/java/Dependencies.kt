@@ -5,7 +5,7 @@ object Versions {
 
     const val x = "1.7.0"
     const val material = "1.12.0"
-    const val constraint_layout = "2.1.4"
+    const val constraint_layout = "2.2.0"
     const val exo_player = "2.19.1"
     const val dagger = "2.52"
     const val paging = "3.3.4"
