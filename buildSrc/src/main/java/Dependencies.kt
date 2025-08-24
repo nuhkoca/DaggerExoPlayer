@@ -21,7 +21,7 @@ object Versions {
     const val test_core = "1.7.0"
     const val runner = "1.7.0"
     const val rules = "1.7.0"
-    const val junit = "1.2.1"
+    const val junit = "1.3.0"
     const val truth_ext = "1.6.0"
     const val truth = "1.4.4"
     const val espresso_core = "3.7.0"
