@@ -18,7 +18,7 @@ object Versions {
     const val glide = "4.16.0"
     const val kotlin_version = "2.1.20"
 
-    const val test_core = "1.6.1"
+    const val test_core = "1.7.0"
     const val runner = "1.6.2"
     const val rules = "1.6.1"
     const val junit = "1.2.1"
