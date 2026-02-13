@@ -1,6 +1,6 @@
 object Versions {
     const val kotlin_gradle_version = "2.3.10"
-    const val gradle_version = "9.0.0"
+    const val gradle_version = "9.0.1"
     const val dokka_version = "0.9.18"
 
     const val x = "1.7.1"
