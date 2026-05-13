@@ -4,7 +4,7 @@ object Versions {
     const val dokka_version = "0.9.18"
 
     const val x = "1.7.1"
-    const val material = "1.13.0"
+    const val material = "1.14.0"
     const val constraint_layout = "2.2.1"
     const val exo_player = "2.19.1"
     const val dagger = "2.59.2"
