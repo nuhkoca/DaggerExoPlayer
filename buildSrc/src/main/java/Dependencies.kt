@@ -3,7 +3,7 @@ object Versions {
     const val gradle_version = "9.3.1"
     const val dokka_version = "0.9.18"
 
-    const val x = "1.7.1"
+    const val x = "1.8.0"
     const val material = "1.14.0"
     const val constraint_layout = "2.2.2"
     const val exo_player = "2.19.1"
