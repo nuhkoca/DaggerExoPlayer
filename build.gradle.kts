@@ -19,7 +19,7 @@ buildscript {
 }
 
 plugins {
-    id("com.github.ben-manes.versions") version ("0.66.0")
+    id("com.github.ben-manes.versions") version ("0.67.0")
 }
 
 allprojects {
